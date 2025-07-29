@@ -486,34 +486,160 @@ footer {
 
 /* Responsive adjustments for game */
 @media (max-width: 600px) {
-    .number-display {
-        font-size: 3em;
-        margin: 15px 0;
-        min-height: 60px;
+    /* ヘッダー */
+    .logo {
+        max-width: 240px;
     }
     
-    .game-btn {
+    h1 {
         font-size: 1em;
+    }
+    
+    h2 {
+        font-size: 0.9em;
+    }
+    
+    /* メインコンテンツ */
+    main {
+        padding: 15px;
+    }
+    
+    main p {
+        font-size: 0.9em;
+        margin-bottom: 30px;
+    }
+    
+    /* ゲームセクション */
+    .math-game-section {
+        margin-top: 40px;
+        padding: 30px 15px;
+    }
+    
+    .math-game-section h3 {
+        font-size: 1.5em;
+    }
+    
+    .game-description {
+        font-size: 0.9em;
+        margin-bottom: 25px;
+    }
+    
+    /* スコアボード */
+    .score-board {
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        font-size: 0.9em;
+    }
+    
+    .score-board span {
+        padding: 8px 15px;
+        flex: 0 0 auto;
+    }
+    
+    /* ライフ表示 */
+    .lives-container {
+        margin: 10px 0;
+        gap: 8px;
+    }
+    
+    .lives-label {
+        font-size: 1em;
+    }
+    
+    .life-icon {
+        font-size: 1.3em;
+    }
+    
+    /* ハイスコア */
+    .high-score {
+        font-size: 0.8em;
+        margin-top: 8px;
+    }
+    
+    /* 数字表示 */
+    .number-display {
+        font-size: 2.5em;
+        margin: 15px 0;
+        min-height: 50px;
+    }
+    
+    /* 結果メッセージ */
+    .result-message {
+        font-size: 1em;
+        margin: 15px 0;
+        min-height: 40px;
+    }
+    
+    /* ゲームボタン */
+    .game-btn {
+        font-size: 0.9em;
         padding: 12px 15px;
     }
     
+    .button-container {
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    
+    /* レベル選択 */
+    .level-selection h4 {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+    
     .level-btn {
-        min-width: 100px;
-        padding: 15px 20px;
+        min-width: 80px;
+        padding: 12px 15px;
     }
     
     .level-buttons {
         flex-direction: column;
+        gap: 10px;
     }
     
-    .score-board {
-        justify-content: center;
-        gap: 15px;
+    .level-name {
+        font-size: 1em;
     }
     
-    .score-board span {
-        font-size: 0.9em;
-        padding: 8px 15px;
-        flex: 0 0 auto;
+    .level-range {
+        font-size: 0.8em;
+    }
+    
+    /* スタートボタン */
+    .start-btn {
+        padding: 12px;
+        font-size: 1em;
+    }
+    
+    /* ゲームオーバー画面 */
+    .game-over {
+        padding: 30px 15px;
+    }
+    
+    .game-over h3 {
+        font-size: 1.6em;
+        margin-bottom: 15px;
+    }
+    
+    .final-score {
+        font-size: 1.2em;
+        margin-bottom: 12px;
+    }
+    
+    .game-over-message {
+        font-size: 1em;
+        margin-bottom: 25px;
+    }
+    
+    .restart-btn {
+        padding: 12px 30px;
+        font-size: 1em;
+    }
+    
+    /* プログレスバー */
+    .progress-container {
+        height: 6px;
+        margin: 15px 0;
     }
 } 
