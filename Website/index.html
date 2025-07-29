@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="YFIT_icon.png" type="image/png">
+    <title>YFIT Japan</title>
+    <style>
+        :root {
+            --primary-dark: #111111;
+            --primary: #222222;
+            --primary-light: #2c2c2c;
+            --accent: #e63946;
+            --accent-dark: #c81d2a;
+            --text-light: #f5f5f5;
+            --text-dark: #333;
+            --section-padding: 5rem 2rem;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        /* ヘッダー */
+        header {
+            background-color: var(--primary-dark);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        header.scrolled {
+            background-color: rgba(17, 17, 17, 0.95);
+            padding: 0.5rem 0;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            height: 48px;
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled .logo {
+            height: 40px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 2rem;
+        }
+        
+        nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        nav ul li a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent);
+        }
+        
+        nav ul li a:hover:after {
+            width: 100%;
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-light);
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        /* ヒーローセクション */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            animation: fadeInUp 1s ease 0.2s forwards;
+            opacity: 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease 0.4s forwards;
+            opacity: 0;
+            box-shadow: 0 4px 15px rgba(230,57,70,0.3);
+        }
+        
+        .cta-button:hover {
+            background-color: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(230,57,70,0.4);
+        }
+        
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .hero-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        /* サービスセクション */
+        .services {
+            padding: var(--section-padding);
+            background-color: #fff;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .services-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .service-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        .service-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover:before {
+            width: 100%;
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+        
+        .service-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .service-link:hover {
+            color: var(--accent-dark);
+            transform: translateX(5px);
+        }
+        
+        /* 会社概要セクション */
+        .about {
+            padding: var(--section-padding);
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            color: var(--text-light);
+        }
+        
+        .about-container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: center;
+        }
+        
+        .about-content {
+            flex: 1;
+            min-width: 300px;
+            padding: 1rem;
+        }
+        
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .about-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-left: 3px solid var(--accent);
+        }
+        
+        .about h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .about h2:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: -10px;
+            left: 0;
+        }
+        
+        .company-info {
+            margin-top: 2rem;
+        }
+        
+        .company-info p {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .company-info strong {
+            min-width: 120px;
+            display: inline-block;
+            color: var(--accent);
+            margin-right: 0.5rem;
+        }
+        
+        /* お問い合わせセクション */
+        .contact {
+            padding: var(--section-padding);
+            background-color: #f8f8f8;
+        }
+        
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border-top: 4px solid var(--accent);
+        }
+        
+        .contact-form {
+            padding: 3rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(230,57,70,0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .submit-button:hover {
+            background-color: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* フッター */
+        footer {
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            padding: 4rem 2rem 2rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 2px;
+            background-color: var(--accent);
+            bottom: -8px;
+            left: 0;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-column ul li a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* アニメーション */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(-30px) translateX(15px);
+            }
+            50% {
+                transform: translateY(-10px) translateX(30px);
+            }
+            75% {
+                transform: translateY(-25px) translateX(5px);
+            }
+        }
+        
+        /* レスポンシブデザイン */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero p {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+                z-index: 2;
+            }
+            
+            nav {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                width: 100%;
+                background-color: var(--primary-dark);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transform: translateX(100%);
+                transition: transform 0.5s ease;
+                z-index: 1;
+            }
+            
+            nav.active {
+                transform: translateX(0);
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 1.5rem 0;
+            }
+            
+            nav ul li a {
+                font-size: 1.2rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .header-container {
+                padding: 1rem 5%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .contact-form {
+                padding: 2rem;
+            }
+        }
+        
+        .footer-column .social-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-light);
+            text-decoration: none;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .footer-column .social-link i {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+            color: var(--accent);
+        }
+        
+        .footer-column .social-link span {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="YFIT_icon.png" alt="YFIT Japan Logo" class="logo">
+            </div>
+            <div class="hamburger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">ホーム</a></li>
+                    <li><a href="#services">サービス</a></li>
+                    <li><a href="#about">会社概要</a></li>
+                    <li><a href="#contact">お問い合わせ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- ヒーローセクション -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Your Future Information Technology</h1>
+            <p>未来を創造するテクノロジーを、日本から世界へ。最先端のAIとアプリケーション開発で、あなたのビジネスを次のレベルへ導きます。</p>
+            <a href="#contact" class="cta-button">お問い合わせ</a>
+        </div>
+        <div class="hero-bg">
+            <!-- 動的な背景パーティクル（JavaScript で生成） -->
+        </div>
+    </section>
+    
+    <!-- サービスセクション -->
+    <section id="services" class="services">
+        <div class="section-title">
+            <h2>サービス</h2>
+            <p>最先端のテクノロジーでビジネスの課題を解決します</p>
+        </div>
+        
+        <div class="services-container">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>ToreMock</h3>
+                <p>英語学習者のためのオンライン模試プラットフォーム。TOEIC、TOEFL、IELTSなどの主要な英語試験の模試を提供し、スコア向上をサポートします。</p>
+                <a href="https://toremock.com" class="service-link" target="_blank">toremock.com</a>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AIソリューション</h3>
+                <p>最新の人工知能技術を活用し、データ分析、予測モデル、自然言語処理などのソリューションを提供します。ビジネスの意思決定を強力にサポートします。</p>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>ウェブアプリケーション開発</h3>
+                <p>ユーザーフレンドリーかつセキュアなウェブアプリケーションを開発します。最新のテクノロジーとベストプラクティスを採用し、高いパフォーマンスを実現します。</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 会社概要セクション -->
+    <section id="about" class="about">
+        <div class="about-container">
+            <div class="about-content">
+                <div class="about-card">
+                    <h2>会社概要</h2>
+                    <p>YFIT Japanは、最先端のインターネットテクノロジーを活用したソリューションを提供する企業です。私たちは、革新的なアプリケーションとAIツールの開発を通じて、お客様のビジネスの成長と発展をサポートします。</p>
+                    
+                    <div class="company-info">
+                        <p><strong>会社名</strong> 合同会社YFIT</p>
+                        <p><strong>設立</strong> 2025年3月</p>
+                        <p><strong>資本金</strong> 1000,000円</p>
+                        <p><strong>代表者</strong> 藤井佑成</p>
+                        <p><strong>所在地</strong> 千葉県船橋市薬園台6-8-2</p>
+                        <p><strong>事業内容</strong> アプリケーション開発、AIソリューション提供、ウェブサービス開発</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="about-image">
+                <img src="YFIT_logo.png" alt="YFIT Japanオフィス" style="max-width: 100%; border-radius: 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.3);">
+            </div>
+        </div>
+    </section>
+    
+    <!-- お問い合わせセクション -->
+    <section id="contact" class="contact">
+        <div class="section-title">
+            <h2>お問い合わせ</h2>
+            <p>サービスについてのご質問やお見積もりのご依頼は、下記フォームからお気軽にお問い合わせください</p>
+        </div>
+        
+        <div class="contact-container">
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">お名前</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company">会社名</label>
+                    <input type="text" id="company" name="company">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">メールアドレス</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">電話番号</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">お問い合わせ内容</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-button">送信する</button>
+            </form>
+        </div>
+    </section>
+    
+    <!-- フッター -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>YFIT Japan</h3>
+                <p>未来を創造するテクノロジーを、日本から世界へ。</p>
+                <p>〒274-0077<br>千葉県船橋市薬園台6-8-2</p>
+                <a href="https://www.instagram.com/yfit.jp/" class="social-link">
+                    <i class="fab fa-instagram"></i>
+                    <span>@yfit.jp</span>
+                </a>
+            </div>
+            
+            <div class="footer-column">
+                <h3>サービス</h3>
+                <ul>
+                    <li><a href="#services">モバイルアプリ開発</a></li>
+                    <li><a href="#services">AIソリューション</a></li>
+                    <li><a href="#services">ウェブアプリケーション開発</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>会社情報</h3>
+                <ul>
+                    <li><a href="#about">会社概要</a></li>
+                    <li><a href="#mission">ミッション</a></li>
+                    <li><a href="#team">チーム</a></li>
+                    <li><a href="#recruit">採用情報</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>お問い合わせ</h3>
+                <ul>
+                    <li><a href="#contact">お問い合わせフォーム</a></li>
+                    <li><a href="tel:+81-xx-xxxx-xxxx">TEL: 080-4686-0794</a></li>
+                    <li><a href="mailto:info@yfitjapan.com">contact@yfitjp.com</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 YFIT, LLC. All rights reserved.
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // ヘッダースクロール効果
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+            
+            // ハンバーガーメニュー
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.querySelector('nav');
+            
+            hamburger.addEventListener('click', function() {
+                nav.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+            
+            // スムーススクロール
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    nav.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // パーティクルアニメーション
+            const heroBg = document.querySelector('.hero-bg');
+            
+            for (let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('hero-particle');
+                
+                // ランダムなサイズとポジション
+                const size = Math.random() * 5 + 3;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                // ランダムな位置
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // ランダムなアニメーション遅延
+                particle.style.animationDelay = `${Math.random() * 8}s`;
+                particle.style.animationDuration = `${Math.random() * 12 + 8}s`;
+                
+                heroBg.appendChild(particle);
+            }
+            
+            // コンタクトフォーム送信（実際のバックエンドがない場合はアラート）
+            const contactForm = document.querySelector('.contact-form');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('お問い合わせありがとうございます。現在デモ版のため送信されませんが、実際のサイトでは正常に送信されます。');
+            });
+            
+            // 要素が画面内に入ったときのアニメーション
+            const observerOptions = {
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.service-card, .about-card, .contact-container, .section-title').forEach(el => {
+                el.classList.add('fade-in');
+                observer.observe(el);
+            });
+        });
+    </script>
+    
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+</body>
+</html>
