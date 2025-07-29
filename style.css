@@ -1,0 +1,103 @@
+body {
+    font-family: 'Helvetica Neue', 'Arial', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', sans-serif;
+    line-height: 1.8;
+    color: #333;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #fff;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.logo {
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 1.5em;
+    margin: 0.5em 0;
+}
+
+h2 {
+    font-size: 1.2em;
+    color: #555;
+    margin: 0;
+    font-weight: normal;
+}
+
+main {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+main p {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.pdf-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.pdf-link {
+    display: block;
+    width: 280px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.pdf-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.pdf-link .year {
+    display: block;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #005a9c; /* A deep blue color */
+    margin-bottom: 10px;
+}
+
+.pdf-link .file-name {
+    font-size: 1.1em;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.2em;
+    }
+    h2 {
+        font-size: 1em;
+    }
+    .pdf-link {
+        width: 100%;
+    }
+} 
