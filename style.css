@@ -7,6 +7,39 @@ body {
     padding: 0;
 }
 
+/* アニメーション定義 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+@keyframes confetti {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes rainbow {
+    0% { border-color: #ff0000; }
+    17% { border-color: #ff8800; }
+    33% { border-color: #ffff00; }
+    50% { border-color: #00ff00; }
+    67% { border-color: #0088ff; }
+    83% { border-color: #8800ff; }
+    100% { border-color: #ff0000; }
+}
+
 header {
     background-color: #fff;
     padding: 20px;
@@ -127,6 +160,34 @@ footer {
 .game-container {
     max-width: 400px;
     margin: 0 auto;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.game-container.streak-5 {
+    border: 3px solid #ff0000;
+    border-radius: 12px;
+    padding: 10px;
+    animation: rainbow 2s linear infinite;
+}
+
+/* 紙吹雪コンテナ */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ff0000;
+    animation: confetti 3s ease-out forwards;
 }
 
 .score-board {
@@ -135,12 +196,46 @@ footer {
     margin-bottom: 30px;
     font-size: 1.1em;
     color: #333;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .score-board span {
     background-color: #f0f0f0;
     padding: 10px 20px;
     border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.score-board span.updating {
+    transform: scale(1.1);
+    background-color: #e3f2fd;
+}
+
+/* ハイスコア表示 */
+.high-score {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* プログレスバー */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    width: 0%;
 }
 
 .number-display {
@@ -153,6 +248,12 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: fadeIn 0.5s ease-out;
+    transition: all 0.3s ease;
+}
+
+.number-display.changing {
+    animation: fadeIn 0.5s ease-out;
 }
 
 .button-container {
@@ -170,6 +271,26 @@ footer {
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: bold;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.game-btn:active::after {
+    width: 300px;
+    height: 300px;
 }
 
 .prime-btn {
@@ -220,10 +341,12 @@ footer {
 
 .result-message.correct {
     color: #4CAF50;
+    animation: pulse 0.5s ease-out;
 }
 
 .result-message.incorrect {
     color: #f44336;
+    animation: shake 0.5s ease-out;
 }
 
 .game-content {

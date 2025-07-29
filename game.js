@@ -6,6 +6,8 @@ let currentNumber = 0;
 let isGameActive = false;
 let selectedLevel = null;
 let maxNumber = 299; // デフォルトは中級
+let questionsAnswered = 0;
+let highScore = localStorage.getItem('primeGameHighScore') || 0;
 
 // DOM要素の取得
 const scoreElement = document.getElementById('score');
@@ -18,6 +20,76 @@ const notPrimeBtn = document.getElementById('not-prime-btn');
 const gameContent = document.querySelector('.game-content');
 const levelSelection = document.getElementById('level-selection');
 const levelButtons = document.querySelectorAll('.level-btn');
+const gameContainer = document.getElementById('prime-game');
+const highScoreDisplay = document.getElementById('high-score-display');
+const progressBar = document.getElementById('progress-bar');
+const progressContainer = document.querySelector('.progress-container');
+
+// 効果音を作成する関数
+function playSound(frequency, duration, type = 'sine') {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = frequency;
+    oscillator.type = type;
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duration);
+}
+
+// 正解音
+function playCorrectSound() {
+    playSound(523, 0.1); // C5
+    setTimeout(() => playSound(659, 0.1), 100); // E5
+    setTimeout(() => playSound(784, 0.2), 200); // G5
+}
+
+// 不正解音
+function playIncorrectSound() {
+    playSound(300, 0.3, 'sawtooth');
+}
+
+// レベルアップ音
+function playLevelUpSound() {
+    playSound(440, 0.1); // A4
+    setTimeout(() => playSound(554, 0.1), 100); // C#5
+    setTimeout(() => playSound(659, 0.1), 200); // E5
+    setTimeout(() => playSound(880, 0.3), 300); // A5
+}
+
+// 紙吹雪エフェクト
+function createConfetti() {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    document.body.appendChild(container);
+    
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+    
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        container.appendChild(confetti);
+    }
+    
+    setTimeout(() => container.remove(), 3000);
+}
+
+// ハイスコア表示を更新
+function updateHighScoreDisplay() {
+    if (highScore > 0) {
+        highScoreDisplay.textContent = `ハイスコア: ${highScore}`;
+    }
+}
 
 // 素数判定関数
 function isPrime(n) {
@@ -71,9 +143,21 @@ function generateRandomNumber() {
 // 新しい問題を表示
 function showNewNumber() {
     currentNumber = generateRandomNumber();
-    numberDisplay.textContent = currentNumber;
+    
+    // フェードアニメーション
+    numberDisplay.classList.add('changing');
+    setTimeout(() => {
+        numberDisplay.textContent = currentNumber;
+        numberDisplay.classList.remove('changing');
+    }, 100);
+    
     resultMessage.textContent = '';
     resultMessage.className = 'result-message';
+    
+    // プログレスバー更新
+    questionsAnswered++;
+    const progress = Math.min((questionsAnswered / 20) * 100, 100);
+    progressBar.style.width = progress + '%';
 }
 
 // 答えをチェック
@@ -81,16 +165,41 @@ function checkAnswer(userSaysPrime) {
     const actuallyPrime = isPrime(currentNumber);
     const correct = userSaysPrime === actuallyPrime;
     
+    // 振動フィードバック（対応デバイスのみ）
+    if ('vibrate' in navigator) {
+        navigator.vibrate(correct ? 50 : [100, 50, 100]);
+    }
+    
     if (correct) {
         score += 10;
         streak += 1;
         resultMessage.textContent = '正解！ 🎉';
         resultMessage.className = 'result-message correct';
         
+        // 効果音
+        playCorrectSound();
+        
+        // スコア更新アニメーション
+        scoreElement.parentElement.classList.add('updating');
+        setTimeout(() => scoreElement.parentElement.classList.remove('updating'), 300);
+        
         // 連続正解ボーナス
         if (streak % 5 === 0) {
             score += 20;
             resultMessage.textContent += ` ${streak}問連続正解！ボーナス +20点！`;
+            playLevelUpSound();
+            createConfetti();
+            
+            // 虹色の枠線
+            gameContainer.classList.add('streak-5');
+            setTimeout(() => gameContainer.classList.remove('streak-5'), 3000);
+        }
+        
+        // ハイスコア更新
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('primeGameHighScore', highScore);
+            updateHighScoreDisplay();
         }
     } else {
         streak = 0;
@@ -103,6 +212,9 @@ function checkAnswer(userSaysPrime) {
             resultMessage.textContent = `残念... ${currentNumber} = ${factorString}`;
         }
         resultMessage.className = 'result-message incorrect';
+        
+        // 効果音
+        playIncorrectSound();
     }
     
     scoreElement.textContent = score;
@@ -121,13 +233,17 @@ function startGame() {
     isGameActive = true;
     score = 0;
     streak = 0;
+    questionsAnswered = 0;
     scoreElement.textContent = score;
     streakElement.textContent = streak;
     
     startBtn.style.display = 'none';
     levelSelection.style.display = 'none';
     gameContent.classList.add('active');
+    progressContainer.style.display = 'block';
+    progressBar.style.width = '0%';
     
+    updateHighScoreDisplay();
     showNewNumber();
 }
 
