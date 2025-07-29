@@ -474,13 +474,13 @@ footer {
 }
 
 .level-name {
-    font-size: 1.2em;
+    font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 5px;
 }
 
 .level-range {
-    font-size: 0.9em;
+    font-size: 1.1em;
     opacity: 0.8;
 }
 
@@ -598,13 +598,13 @@ footer {
         gap: 10px;
     }
     
-    .level-name {
-        font-size: 1em;
-    }
-    
-    .level-range {
-        font-size: 0.8em;
-    }
+         .level-name {
+         font-size: 1.3em;
+     }
+     
+     .level-range {
+         font-size: 1em;
+     }
     
     /* スタートボタン */
     .start-btn {
