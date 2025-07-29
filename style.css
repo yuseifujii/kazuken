@@ -234,6 +234,55 @@ footer {
     display: block;
 }
 
+/* Level Selection Styles */
+.level-selection {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.level-selection h4 {
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.level-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.level-btn {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 30px;
+    background-color: #fff;
+    border: 2px solid #005a9c;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.level-btn:hover {
+    background-color: #005a9c;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.level-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.level-range {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
 /* Responsive adjustments for game */
 @media (max-width: 600px) {
     .number-display {
@@ -243,5 +292,14 @@ footer {
     .game-btn {
         font-size: 1em;
         padding: 12px 15px;
+    }
+    
+    .level-btn {
+        min-width: 100px;
+        padding: 15px 20px;
+    }
+    
+    .level-buttons {
+        flex-direction: column;
     }
 } 

@@ -4,6 +4,8 @@ let score = 0;
 let streak = 0;
 let currentNumber = 0;
 let isGameActive = false;
+let selectedLevel = null;
+let maxNumber = 299; // デフォルトは中級
 
 // DOM要素の取得
 const scoreElement = document.getElementById('score');
@@ -14,6 +16,8 @@ const startBtn = document.getElementById('start-btn');
 const primeBtn = document.getElementById('prime-btn');
 const notPrimeBtn = document.getElementById('not-prime-btn');
 const gameContent = document.querySelector('.game-content');
+const levelSelection = document.getElementById('level-selection');
+const levelButtons = document.querySelectorAll('.level-btn');
 
 // 素数判定関数
 function isPrime(n) {
@@ -56,10 +60,11 @@ function primeFactorization(n) {
     return factors;
 }
 
-// ランダムな奇数を生成（3から299まで）
+// ランダムな奇数を生成
 function generateRandomNumber() {
-    // 1から149までの数を生成し、2倍して1を足すことで3から299の奇数を得る
-    const oddIndex = Math.floor(Math.random() * 149) + 1;
+    // maxNumberに基づいて奇数を生成
+    const maxOddIndex = Math.floor((maxNumber - 1) / 2);
+    const oddIndex = Math.floor(Math.random() * maxOddIndex) + 1;
     return oddIndex * 2 + 1;
 }
 
@@ -120,10 +125,36 @@ function startGame() {
     streakElement.textContent = streak;
     
     startBtn.style.display = 'none';
+    levelSelection.style.display = 'none';
     gameContent.classList.add('active');
     
     showNewNumber();
 }
+
+// レベル選択の処理
+levelButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        selectedLevel = button.dataset.level;
+        
+        // レベルに応じて最大数を設定
+        switch(selectedLevel) {
+            case 'easy':
+                maxNumber = 99;
+                break;
+            case 'medium':
+                maxNumber = 299;
+                break;
+            case 'hard':
+                maxNumber = 999;
+                break;
+        }
+        
+        // レベル選択を非表示にしてスタートボタンを表示
+        levelSelection.style.display = 'none';
+        startBtn.style.display = 'block';
+        startBtn.textContent = `${button.querySelector('.level-name').textContent}でスタート！`;
+    });
+});
 
 // イベントリスナーの設定
 startBtn.addEventListener('click', startGame);
