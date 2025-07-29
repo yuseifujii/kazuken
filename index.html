@@ -27,9 +27,39 @@
                 <span class="file-name">かずけん 部誌</span>
             </a>
         </div>
+        
+        <!-- 数学ゲームセクション -->
+        <section class="math-game-section">
+            <h3>🎮 素数判定ゲーム</h3>
+            <p class="game-description">表示される数字が素数かどうかを当てよう！</p>
+            
+            <div id="prime-game" class="game-container">
+                <div class="score-board">
+                    <span>スコア: <span id="score">0</span></span>
+                    <span>連続正解: <span id="streak">0</span></span>
+                </div>
+                
+                <div class="game-content">
+                    <div id="number-display" class="number-display">
+                        <!-- 数字がここに表示される -->
+                    </div>
+                    
+                    <div class="button-container">
+                        <button id="prime-btn" class="game-btn prime-btn">素数だ！</button>
+                        <button id="not-prime-btn" class="game-btn not-prime-btn">素数じゃない！</button>
+                    </div>
+                    
+                    <div id="result-message" class="result-message"></div>
+                </div>
+                
+                <button id="start-btn" class="start-btn">ゲームスタート</button>
+            </div>
+        </section>
     </main>
     <footer>
         <p>&copy; 2025 千葉県立千葉高等学校 数学研究会 かずけん</p>
     </footer>
+    
+    <script src="game.js"></script>
 </body>
 </html> 
