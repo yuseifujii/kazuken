@@ -29,9 +29,11 @@ function isPrime(n) {
     return true;
 }
 
-// ランダムな数を生成（2から200まで）
+// ランダムな奇数を生成（3から299まで）
 function generateRandomNumber() {
-    return Math.floor(Math.random() * 199) + 2;
+    // 1から149までの数を生成し、2倍して1を足すことで3から299の奇数を得る
+    const oddIndex = Math.floor(Math.random() * 149) + 1;
+    return oddIndex * 2 + 1;
 }
 
 // 新しい問題を表示
