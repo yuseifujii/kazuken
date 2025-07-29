@@ -277,8 +277,8 @@ footer {
     font-weight: bold;
     text-align: center;
     color: #005a9c;
-    margin: 40px 0;
-    min-height: 100px;
+    margin: 20px 0;
+    min-height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -488,6 +488,8 @@ footer {
 @media (max-width: 600px) {
     .number-display {
         font-size: 3em;
+        margin: 15px 0;
+        min-height: 60px;
     }
     
     .game-btn {
@@ -502,5 +504,16 @@ footer {
     
     .level-buttons {
         flex-direction: column;
+    }
+    
+    .score-board {
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .score-board span {
+        font-size: 0.9em;
+        padding: 8px 15px;
+        flex: 0 0 auto;
     }
 } 
