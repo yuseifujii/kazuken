@@ -212,6 +212,40 @@ footer {
     background-color: #e3f2fd;
 }
 
+/* ライフ表示 */
+.lives-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0;
+    gap: 10px;
+}
+
+.lives-label {
+    font-size: 1.1em;
+    color: #333;
+}
+
+.lives {
+    display: flex;
+    gap: 5px;
+}
+
+.life-icon {
+    font-size: 1.5em;
+    transition: all 0.3s ease;
+}
+
+.life-icon.lost {
+    opacity: 0.3;
+    transform: scale(0.8);
+    filter: grayscale(100%);
+}
+
+.life-icon.losing {
+    animation: shake 0.5s ease-out;
+}
+
 /* ハイスコア表示 */
 .high-score {
     text-align: center;
@@ -355,6 +389,50 @@ footer {
 
 .game-content.active {
     display: block;
+}
+
+/* ゲームオーバー画面 */
+.game-over {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.game-over h3 {
+    font-size: 2em;
+    color: #f44336;
+    margin-bottom: 20px;
+}
+
+.final-score {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.game-over-message {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.restart-btn {
+    padding: 15px 40px;
+    font-size: 1.2em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.restart-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
 }
 
 /* Level Selection Styles */

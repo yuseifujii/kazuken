@@ -57,6 +57,15 @@
                     <span>連続正解: <span id="streak">0</span></span>
                 </div>
                 
+                <div class="lives-container">
+                    <span class="lives-label">ライフ:</span>
+                    <div class="lives" id="lives-display">
+                        <span class="life-icon">❤️</span>
+                        <span class="life-icon">❤️</span>
+                        <span class="life-icon">❤️</span>
+                    </div>
+                </div>
+                
                 <div class="high-score" id="high-score-display"></div>
                 
                 <div class="progress-container" style="display: none;">
@@ -74,6 +83,13 @@
                         <button id="prime-btn" class="game-btn prime-btn">素数だ！</button>
                         <button id="not-prime-btn" class="game-btn not-prime-btn">素数じゃない！</button>
                     </div>
+                </div>
+                
+                <div id="game-over" class="game-over" style="display: none;">
+                    <h3>ゲームオーバー！</h3>
+                    <p class="final-score">最終スコア: <span id="final-score">0</span></p>
+                    <p class="game-over-message" id="game-over-message"></p>
+                    <button id="restart-btn" class="restart-btn">もう一度プレイ</button>
                 </div>
                 
                 <div id="level-selection" class="level-selection">

@@ -8,6 +8,8 @@ let selectedLevel = null;
 let maxNumber = 299; // デフォルトは中級
 let questionsAnswered = 0;
 let highScore = localStorage.getItem('primeGameHighScore') || 0;
+let lives = 3;
+const MAX_LIVES = 3;
 
 // DOM要素の取得
 const scoreElement = document.getElementById('score');
@@ -24,6 +26,11 @@ const gameContainer = document.getElementById('prime-game');
 const highScoreDisplay = document.getElementById('high-score-display');
 const progressBar = document.getElementById('progress-bar');
 const progressContainer = document.querySelector('.progress-container');
+const livesDisplay = document.getElementById('lives-display');
+const gameOverScreen = document.getElementById('game-over');
+const finalScoreElement = document.getElementById('final-score');
+const gameOverMessage = document.getElementById('game-over-message');
+const restartBtn = document.getElementById('restart-btn');
 
 // 効果音を作成する関数
 function playSound(frequency, duration, type = 'sine') {
@@ -89,6 +96,38 @@ function updateHighScoreDisplay() {
     if (highScore > 0) {
         highScoreDisplay.textContent = `ハイスコア: ${highScore}`;
     }
+}
+
+// ライフ表示を更新
+function updateLivesDisplay() {
+    const lifeIcons = livesDisplay.querySelectorAll('.life-icon');
+    lifeIcons.forEach((icon, index) => {
+        if (index >= lives) {
+            icon.classList.add('lost');
+        } else {
+            icon.classList.remove('lost');
+        }
+    });
+}
+
+// ゲームオーバー処理
+function gameOver() {
+    isGameActive = false;
+    gameContent.classList.remove('active');
+    gameOverScreen.style.display = 'block';
+    finalScoreElement.textContent = score;
+    
+    // ゲームオーバーメッセージ
+    if (score >= 100) {
+        gameOverMessage.textContent = 'すばらしい成績です！素数マスターですね！';
+    } else if (score >= 50) {
+        gameOverMessage.textContent = 'よく頑張りました！もう一度挑戦してみましょう！';
+    } else {
+        gameOverMessage.textContent = '練習あるのみ！次はもっと高得点を目指しましょう！';
+    }
+    
+    // ゲームオーバー音
+    playSound(200, 0.5, 'sawtooth');
 }
 
 // 素数判定関数
@@ -203,6 +242,18 @@ function checkAnswer(userSaysPrime) {
         }
     } else {
         streak = 0;
+        lives--;
+        
+        // ライフアイコンにアニメーション
+        const lifeIcons = livesDisplay.querySelectorAll('.life-icon');
+        if (lives >= 0 && lives < MAX_LIVES) {
+            lifeIcons[lives].classList.add('losing');
+            setTimeout(() => {
+                lifeIcons[lives].classList.remove('losing');
+                updateLivesDisplay();
+            }, 500);
+        }
+        
         if (actuallyPrime) {
             resultMessage.textContent = `残念... ${currentNumber}は素数です`;
         } else {
@@ -211,10 +262,24 @@ function checkAnswer(userSaysPrime) {
             const factorString = factors.join(' × ');
             resultMessage.textContent = `残念... ${currentNumber} = ${factorString}`;
         }
+        
+        // 残りライフを表示
+        if (lives > 0) {
+            resultMessage.textContent += ` (残りライフ: ${lives})`;
+        }
+        
         resultMessage.className = 'result-message incorrect';
         
         // 効果音
         playIncorrectSound();
+        
+        // ゲームオーバーチェック
+        if (lives <= 0) {
+            setTimeout(() => {
+                gameOver();
+            }, 1500);
+            return;
+        }
     }
     
     scoreElement.textContent = score;
@@ -234,16 +299,19 @@ function startGame() {
     score = 0;
     streak = 0;
     questionsAnswered = 0;
+    lives = MAX_LIVES;
     scoreElement.textContent = score;
     streakElement.textContent = streak;
     
     startBtn.style.display = 'none';
     levelSelection.style.display = 'none';
+    gameOverScreen.style.display = 'none';
     gameContent.classList.add('active');
     progressContainer.style.display = 'block';
     progressBar.style.width = '0%';
     
     updateHighScoreDisplay();
+    updateLivesDisplay();
     showNewNumber();
 }
 
@@ -274,6 +342,10 @@ levelButtons.forEach(button => {
 
 // イベントリスナーの設定
 startBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', () => {
+    gameOverScreen.style.display = 'none';
+    levelSelection.style.display = 'block';
+});
 
 primeBtn.addEventListener('click', () => {
     if (isGameActive && numberDisplay.textContent) {
