@@ -29,6 +29,33 @@ function isPrime(n) {
     return true;
 }
 
+// 素因数分解関数
+function primeFactorization(n) {
+    const factors = [];
+    let num = n;
+    
+    // 2で割れるだけ割る
+    while (num % 2 === 0) {
+        factors.push(2);
+        num = num / 2;
+    }
+    
+    // 3以上の奇数で割る
+    for (let i = 3; i * i <= num; i += 2) {
+        while (num % i === 0) {
+            factors.push(i);
+            num = num / i;
+        }
+    }
+    
+    // 残った数が1より大きければそれも素因数
+    if (num > 1) {
+        factors.push(num);
+    }
+    
+    return factors;
+}
+
 // ランダムな奇数を生成（3から299まで）
 function generateRandomNumber() {
     // 1から149までの数を生成し、2倍して1を足すことで3から299の奇数を得る
@@ -62,19 +89,26 @@ function checkAnswer(userSaysPrime) {
         }
     } else {
         streak = 0;
-        resultMessage.textContent = `残念... ${currentNumber}は${actuallyPrime ? '素数' : '素数ではありません'}`;
+        if (actuallyPrime) {
+            resultMessage.textContent = `残念... ${currentNumber}は素数です`;
+        } else {
+            // 素因数分解を表示
+            const factors = primeFactorization(currentNumber);
+            const factorString = factors.join(' × ');
+            resultMessage.textContent = `残念... ${currentNumber} = ${factorString}`;
+        }
         resultMessage.className = 'result-message incorrect';
     }
     
     scoreElement.textContent = score;
     streakElement.textContent = streak;
     
-    // 2秒後に次の問題へ
+    // 3秒後に次の問題へ（素因数分解を見る時間を確保）
     setTimeout(() => {
         if (isGameActive) {
             showNewNumber();
         }
-    }, 2000);
+    }, 3000);
 }
 
 // ゲーム開始
