@@ -672,16 +672,12 @@ levelButtons.forEach(button => {
         if (selectedLevel === 'hard') {
             userInfoForm.style.display = 'block';
             startBtn.textContent = '上級でスタート！';
-            
-            // ランキングボタンを表示
-            rankingDashboardBtn.style.display = 'block';
         } else {
             userInfoForm.style.display = 'none';
             startBtn.textContent = `${button.querySelector('.level-name').textContent}でスタート！`;
-            
-            // ランキングボタンを非表示
-            rankingDashboardBtn.style.display = 'none';
         }
+        
+        // ランキングボタンは常に表示（位置が固定なので表示制御不要）
         
         startBtn.style.display = 'block';
     });
@@ -693,7 +689,7 @@ restartBtn.addEventListener('click', () => {
     gameOverScreen.style.display = 'none';
     levelSelection.style.display = 'block';
     userInfoForm.style.display = 'none';
-    rankingDashboardBtn.style.display = 'none';
+    // ランキングボタンは常に表示のため、非表示にしない
     selectedLevel = null;
     
     // ユーザー情報をリセット

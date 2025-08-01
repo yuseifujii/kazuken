@@ -51,11 +51,14 @@
             <h3>素数判定ゲーム</h3>
             <p class="game-description">表示される数字が素数かどうかを当てよう！</p>
             
-            <div id="prime-game" class="game-container">
-                <!-- ランキングダッシュボードボタン -->
-                <button id="ranking-dashboard-btn" class="ranking-dashboard-btn" style="display: none;">
-                    📊 ランキング
+            <!-- ランキングダッシュボードボタン（説明文の下に固定配置） -->
+            <div class="ranking-button-container">
+                <button id="ranking-dashboard-btn" class="ranking-dashboard-btn">
+                    🏆 上級レベル ランキング
                 </button>
+            </div>
+            
+            <div id="prime-game" class="game-container">
 
                 <div class="score-board">
                     <span>スコア: <span id="score">0</span></span>
@@ -142,7 +145,10 @@
             <div id="ranking-modal" class="ranking-modal" style="display: none;">
                 <div class="ranking-modal-content">
                     <div class="ranking-header">
-                        <h3>🏆 上級レベル ランキング</h3>
+                        <div class="ranking-header-content">
+                            <h3>🏆 上級レベル ランキング</h3>
+                            <p class="ranking-note">※上級レベル（3〜999）専用のランキングです</p>
+                        </div>
                         <button id="close-ranking-btn" class="close-btn">&times;</button>
                     </div>
                     <div class="ranking-content">
