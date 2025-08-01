@@ -25,15 +25,21 @@ module.exports = async (req, res) => {
     const db = getFirestore();
     console.log('✅ Firestore接続完了');
     
-    // ランキングコレクションから上位50件を取得
-    console.log('📊 ランキングクエリ実行中...');
+    // 全体の参加者数を取得
+    console.log('📊 参加者数カウント中...');
+    const totalSnapshot = await db.collection('rankings').get();
+    const totalParticipants = totalSnapshot.size;
+    console.log('👥 総参加者数:', totalParticipants, '人');
+    
+    // ランキングコレクションから上位10件を取得
+    console.log('🏆 上位ランキング取得中...');
     const snapshot = await db.collection('rankings')
       .orderBy('score', 'desc')
       .orderBy('timestamp', 'asc') // 同スコアの場合は早い者勝ち
-      .limit(50)
+      .limit(10)
       .get();
 
-    console.log('📋 クエリ結果:', snapshot.size, '件のドキュメント');
+    console.log('📋 上位ランキング結果:', snapshot.size, '件のドキュメント');
 
     const rankings = [];
     snapshot.forEach((doc) => {
@@ -60,12 +66,13 @@ module.exports = async (req, res) => {
       });
     });
 
-    console.log('✨ 返却データ:', rankings.length, '件');
+    console.log('✨ 返却データ:', rankings.length, '件 / 総参加者', totalParticipants, '人');
 
     res.status(200).json({
       success: true,
       rankings: rankings,
       count: rankings.length,
+      totalParticipants: totalParticipants,
       lastUpdated: new Date().toISOString()
     });
 

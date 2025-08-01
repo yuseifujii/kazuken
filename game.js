@@ -47,6 +47,7 @@ const rankingLoading = document.getElementById('ranking-loading');
 const rankingError = document.getElementById('ranking-error');
 const rankingErrorMessage = document.getElementById('ranking-error-message');
 const rankingRetryBtn = document.getElementById('ranking-retry-btn');
+const totalParticipantsElement = document.getElementById('total-participants');
 
 // 文字数カウンター
 const affiliationCounter = document.getElementById('affiliation-counter');
@@ -135,15 +136,24 @@ class RankingSystem {
             });
             console.log('📨 API応答受信:', data);
 
-            return data.rankings || [];
+            // API全体のレスポンスを返す（rankings配列 + totalParticipants）
+            return data;
         } catch (error) {
             console.error('❌ ランキング取得エラー:', error);
             this.lastError = error.message;
             
             // エラー時はLocalStorageのバックアップデータを返す
             const backupData = localStorage.getItem('primeGameRanking_backup');
-            console.log('💾 バックアップデータ使用:', backupData ? JSON.parse(backupData) : []);
-            return backupData ? JSON.parse(backupData) : [];
+            const backupArray = backupData ? JSON.parse(backupData) : [];
+            console.log('💾 バックアップデータ使用:', backupArray);
+            
+            // バックアップデータをAPIレスポンス形式で返す
+            return {
+                rankings: backupArray,
+                totalParticipants: backupArray.length,
+                count: backupArray.length,
+                lastUpdated: new Date().toISOString()
+            };
         } finally {
             this.isLoading = false;
         }
@@ -170,7 +180,8 @@ class RankingSystem {
             });
 
             // 成功時は最新ランキングを取得してバックアップとして保存
-            const latestRankings = await this.getRankings();
+            const latestData = await this.getRankings();
+            const latestRankings = latestData.rankings || [];
             localStorage.setItem('primeGameRanking_backup', JSON.stringify(latestRankings));
 
             return data;
@@ -230,8 +241,12 @@ async function updateRankingDisplay() {
     
     try {
         console.log('🔍 ランキング取得開始...');
-        const rankings = await rankingSystem.getRankings();
-        console.log('✅ ランキング取得完了:', rankings);
+        const data = await rankingSystem.getRankings();
+        console.log('✅ ランキング取得完了:', data);
+        
+        // データ構造を確認（APIレスポンス全体 vs ランキング配列のみ）
+        const rankings = Array.isArray(data) ? data : data.rankings || [];
+        const totalParticipants = data.totalParticipants || 0;
         
         // ローディングを非表示
         rankingLoading.style.display = 'none';
@@ -240,6 +255,7 @@ async function updateRankingDisplay() {
             console.log('⚠️ ランキングデータが空です');
             rankingEmpty.style.display = 'block';
             rankingUpdateTime.textContent = '--';
+            totalParticipantsElement.textContent = totalParticipants || '--';
             return;
         }
 
@@ -277,9 +293,10 @@ async function updateRankingDisplay() {
             rankingTableBody.appendChild(row);
         });
         
-        // 最終更新時刻を設定
+        // 最終更新時刻と参加者数を設定
         const now = new Date();
         rankingUpdateTime.textContent = now.toLocaleString('ja-JP');
+        totalParticipantsElement.textContent = totalParticipants;
         
     } catch (error) {
         // ローディングを非表示
