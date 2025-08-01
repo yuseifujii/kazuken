@@ -10,6 +10,7 @@ let questionsAnswered = 0;
 let highScore = 0;
 let lives = 3;
 const MAX_LIVES = 3;
+let gameStartTime = null;
 
 // DOM要素の取得
 const scoreElement = document.getElementById('score');
@@ -42,6 +43,10 @@ const closeRankingBtn = document.getElementById('close-ranking-btn');
 const rankingTableBody = document.getElementById('ranking-table-body');
 const rankingUpdateTime = document.getElementById('ranking-update-time');
 const rankingEmpty = document.getElementById('ranking-empty');
+const rankingLoading = document.getElementById('ranking-loading');
+const rankingError = document.getElementById('ranking-error');
+const rankingErrorMessage = document.getElementById('ranking-error-message');
+const rankingRetryBtn = document.getElementById('ranking-retry-btn');
 
 // ユーザー情報
 let userInfo = {
@@ -49,53 +54,141 @@ let userInfo = {
     nickname: ''
 };
 
-// ランキングシステム（モック実装）
+// API設定
+const API_CONFIG = {
+    baseURL: window.location.hostname === 'localhost' 
+        ? 'http://localhost:3000' 
+        : '', // Vercelでは相対パスを使用
+    timeout: 10000 // 10秒タイムアウト
+};
+
+// ランキングシステム（API実装）
 class RankingSystem {
     constructor() {
-        this.rankingKey = 'primeGameRanking_hard';
+        this.isLoading = false;
+        this.lastError = null;
+    }
+
+    // API呼び出し共通メソッド
+    async apiCall(endpoint, options = {}) {
+        const url = `${API_CONFIG.baseURL}/api${endpoint}`;
+        const defaultOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            timeout: API_CONFIG.timeout,
+        };
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
+
+            const response = await fetch(url, {
+                ...defaultOptions,
+                ...options,
+                signal: controller.signal,
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || 'APIエラーが発生しました');
+            }
+
+            return data;
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                throw new Error('リクエストがタイムアウトしました');
+            }
+            throw error;
+        }
     }
 
     // ランキングデータを取得
-    getRankings() {
-        const data = localStorage.getItem(this.rankingKey);
-        return data ? JSON.parse(data) : [];
+    async getRankings() {
+        this.isLoading = true;
+        this.lastError = null;
+
+        try {
+            const data = await this.apiCall('/rankings/get', {
+                method: 'GET'
+            });
+
+            return data.rankings || [];
+        } catch (error) {
+            console.error('ランキング取得エラー:', error);
+            this.lastError = error.message;
+            
+            // エラー時はLocalStorageのバックアップデータを返す
+            const backupData = localStorage.getItem('primeGameRanking_backup');
+            return backupData ? JSON.parse(backupData) : [];
+        } finally {
+            this.isLoading = false;
+        }
     }
 
     // 新しいスコアを追加
-    addScore(score, nickname, affiliation) {
-        const rankings = this.getRankings();
-        const newEntry = {
-            score: score,
-            nickname: nickname,
-            affiliation: affiliation,
-            timestamp: new Date().toISOString(),
-            id: Date.now() + Math.random() // 簡易的なID生成
-        };
+    async addScore(score, nickname, affiliation, sessionData = {}) {
+        this.isLoading = true;
+        this.lastError = null;
 
-        rankings.push(newEntry);
-        
-        // スコア順にソート（降順）
-        rankings.sort((a, b) => b.score - a.score);
-        
-        // 上位50位まで保持
-        const topRankings = rankings.slice(0, 50);
-        
-        localStorage.setItem(this.rankingKey, JSON.stringify(topRankings));
-        return topRankings;
+        try {
+            const data = await this.apiCall('/rankings/submit', {
+                method: 'POST',
+                body: JSON.stringify({
+                    score,
+                    nickname,
+                    affiliation,
+                    sessionData: {
+                        ...sessionData,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent,
+                    }
+                })
+            });
+
+            // 成功時は最新ランキングを取得してバックアップとして保存
+            const latestRankings = await this.getRankings();
+            localStorage.setItem('primeGameRanking_backup', JSON.stringify(latestRankings));
+
+            return data;
+        } catch (error) {
+            console.error('スコア送信エラー:', error);
+            this.lastError = error.message;
+            throw error;
+        } finally {
+            this.isLoading = false;
+        }
     }
 
-    // ランキングをクリア（デバッグ用）
-    clearRankings() {
-        localStorage.removeItem(this.rankingKey);
+    // エラー状態をクリア
+    clearError() {
+        this.lastError = null;
+    }
+
+    // ローディング状態を取得
+    getLoadingState() {
+        return this.isLoading;
+    }
+
+    // 最後のエラーを取得
+    getLastError() {
+        return this.lastError;
     }
 }
 
 const rankingSystem = new RankingSystem();
 
 // ランキングダッシュボードの表示
-function showRankingDashboard() {
-    updateRankingDisplay();
+async function showRankingDashboard() {
     rankingModal.style.display = 'block';
+    await updateRankingDisplay();
 }
 
 // ランキングダッシュボードを閉じる
@@ -103,55 +196,82 @@ function closeRankingDashboard() {
     rankingModal.style.display = 'none';
 }
 
-// ランキング表示を更新
-function updateRankingDisplay() {
-    const rankings = rankingSystem.getRankings();
-    
-    if (rankings.length === 0) {
-        rankingTableBody.style.display = 'none';
-        rankingEmpty.style.display = 'block';
-        rankingUpdateTime.textContent = '--';
-        return;
-    }
-
-    rankingTableBody.style.display = 'table-row-group';
+// 表示状態をリセット
+function resetRankingDisplayState() {
+    rankingLoading.style.display = 'none';
+    rankingError.style.display = 'none';
+    rankingTableBody.style.display = 'none';
     rankingEmpty.style.display = 'none';
+}
+
+// ランキング表示を更新
+async function updateRankingDisplay() {
+    // 表示状態をリセット
+    resetRankingDisplayState();
     
-    // テーブルの内容をクリア
-    rankingTableBody.innerHTML = '';
+    // ローディング表示
+    rankingLoading.style.display = 'block';
     
-    // ランキングデータを表示
-    rankings.forEach((entry, index) => {
-        const row = document.createElement('tr');
-        if (index < 3) {
-            row.classList.add(`rank-${index + 1}`);
+    try {
+        const rankings = await rankingSystem.getRankings();
+        
+        // ローディングを非表示
+        rankingLoading.style.display = 'none';
+        
+        if (rankings.length === 0) {
+            rankingEmpty.style.display = 'block';
+            rankingUpdateTime.textContent = '--';
+            return;
         }
+
+        rankingTableBody.style.display = 'table-row-group';
         
-        const rank = index + 1;
-        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+        // テーブルの内容をクリア
+        rankingTableBody.innerHTML = '';
         
-        const date = new Date(entry.timestamp);
-        const timeString = date.toLocaleString('ja-JP', {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+        // ランキングデータを表示
+        rankings.forEach((entry, index) => {
+            const row = document.createElement('tr');
+            if (index < 3) {
+                row.classList.add(`rank-${index + 1}`);
+            }
+            
+            const rank = index + 1;
+            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+            
+            const date = new Date(entry.timestamp);
+            const timeString = date.toLocaleString('ja-JP', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            row.innerHTML = `
+                <td>${medal} ${rank}</td>
+                <td class="score-cell">${entry.score}</td>
+                <td class="nickname-cell">${escapeHtml(entry.nickname)}</td>
+                <td class="affiliation-cell">${escapeHtml(entry.affiliation)}</td>
+                <td class="time-cell">${timeString}</td>
+            `;
+            
+            rankingTableBody.appendChild(row);
         });
         
-        row.innerHTML = `
-            <td>${medal} ${rank}</td>
-            <td class="score-cell">${entry.score}</td>
-            <td class="nickname-cell">${escapeHtml(entry.nickname)}</td>
-            <td class="affiliation-cell">${escapeHtml(entry.affiliation)}</td>
-            <td class="time-cell">${timeString}</td>
-        `;
+        // 最終更新時刻を設定
+        const now = new Date();
+        rankingUpdateTime.textContent = now.toLocaleString('ja-JP');
         
-        rankingTableBody.appendChild(row);
-    });
-    
-    // 最終更新時刻を設定
-    const now = new Date();
-    rankingUpdateTime.textContent = now.toLocaleString('ja-JP');
+    } catch (error) {
+        // ローディングを非表示
+        rankingLoading.style.display = 'none';
+        
+        // エラー表示
+        rankingError.style.display = 'block';
+        rankingErrorMessage.textContent = error.message || 'ランキングの読み込みに失敗しました';
+        
+        console.error('ランキング表示エラー:', error);
+    }
 }
 
 // HTMLエスケープ関数
@@ -257,18 +377,24 @@ function updateLivesDisplay() {
 }
 
 // ゲームオーバー処理
-function gameOver() {
+async function gameOver() {
     isGameActive = false;
     gameContent.classList.remove('active');
     gameOverScreen.style.display = 'block';
     finalScoreElement.textContent = score;
     
-    // 上級レベルでスコアが記録できる場合、ランキングに追加
-    if (selectedLevel === 'hard' && userInfo.nickname && userInfo.affiliation && score > 0) {
-        rankingSystem.addScore(score, userInfo.nickname, userInfo.affiliation);
-    }
+    // セッションデータを作成
+    const gameEndTime = new Date();
+    const gameDuration = gameStartTime ? (gameEndTime - gameStartTime) / 1000 : 0;
+    const sessionData = {
+        duration: gameDuration,
+        questionsAnswered: questionsAnswered,
+        level: selectedLevel,
+        startTime: gameStartTime?.toISOString(),
+        endTime: gameEndTime.toISOString()
+    };
     
-    // ゲームオーバーメッセージ
+    // 基本のゲームオーバーメッセージ
     if (score >= 100) {
         gameOverMessage.textContent = 'すばらしい成績です！素数マスターですね！';
     } else if (score >= 50) {
@@ -277,9 +403,28 @@ function gameOver() {
         gameOverMessage.textContent = '練習あるのみ！次はもっと高得点を目指しましょう！';
     }
     
-    // 上級レベルの場合、ランキング追加のメッセージを表示
+    // 上級レベルでスコアが記録できる場合、ランキングに追加
     if (selectedLevel === 'hard' && userInfo.nickname && userInfo.affiliation && score > 0) {
-        gameOverMessage.textContent += ' ランキングに記録されました！';
+        try {
+            // スコア送信中のメッセージ
+            gameOverMessage.textContent += ' スコアを記録中...';
+            
+            await rankingSystem.addScore(score, userInfo.nickname, userInfo.affiliation, sessionData);
+            
+            // 成功メッセージ
+            gameOverMessage.textContent = gameOverMessage.textContent.replace(' スコアを記録中...', ' ランキングに記録されました！🎉');
+            
+        } catch (error) {
+            console.error('スコア送信エラー:', error);
+            
+            // エラーメッセージ
+            gameOverMessage.textContent = gameOverMessage.textContent.replace(' スコアを記録中...', ' ⚠️ スコアの記録に失敗しました');
+            
+            // エラーの詳細を表示（レート制限の場合など）
+            if (error.message.includes('1分間に1回')) {
+                gameOverMessage.textContent += '（連続送信制限）';
+            }
+        }
     }
     
     // ゲームオーバー音
@@ -431,8 +576,8 @@ function checkAnswer(userSaysPrime) {
         
         // ゲームオーバーチェック
         if (lives <= 0) {
-            setTimeout(() => {
-                gameOver();
+            setTimeout(async () => {
+                await gameOver();
             }, 1500);
             return;
         }
@@ -470,6 +615,7 @@ function startGame() {
     streak = 0;
     questionsAnswered = 0;
     lives = MAX_LIVES;
+    gameStartTime = new Date(); // ゲーム開始時間を記録
     scoreElement.textContent = score;
     streakElement.textContent = streak;
     
@@ -551,6 +697,11 @@ rankingModal.addEventListener('click', (e) => {
     if (e.target === rankingModal) {
         closeRankingDashboard();
     }
+});
+
+// ランキング再試行ボタン
+rankingRetryBtn.addEventListener('click', async () => {
+    await updateRankingDisplay();
 });
 
 primeBtn.addEventListener('click', () => {

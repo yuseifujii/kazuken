@@ -1,0 +1,16 @@
+{
+  "name": "kazuken-prime-game",
+  "version": "1.0.0",
+  "description": "千葉高校かずけん素数判定ゲーム",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}

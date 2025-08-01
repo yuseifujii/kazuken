@@ -149,6 +149,20 @@
                         <div class="ranking-update-time">
                             最終更新: <span id="ranking-update-time">--</span>
                         </div>
+                        
+                        <!-- ローディング表示 -->
+                        <div class="ranking-loading" id="ranking-loading" style="display: none;">
+                            <div class="loading-spinner"></div>
+                            <p>ランキングを読み込み中...</p>
+                        </div>
+                        
+                        <!-- エラー表示 -->
+                        <div class="ranking-error" id="ranking-error" style="display: none;">
+                            <div class="error-icon">⚠️</div>
+                            <p id="ranking-error-message">エラーが発生しました</p>
+                            <button id="ranking-retry-btn" class="retry-btn">再試行</button>
+                        </div>
+                        
                         <div class="ranking-table-container">
                             <table class="ranking-table">
                                 <thead>
