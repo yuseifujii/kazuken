@@ -1138,58 +1138,58 @@ footer {
    ======================================== */
 
 .board-section {
-    max-width: 1000px;
-    margin: 30px auto;
-    padding: 0 20px;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 15px;
     background-color: #f8f9fa;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .board-section h3 {
     color: #2c3e50;
-    font-size: 1.8em;
-    margin-bottom: 10px;
+    font-size: 1.5em;
+    margin-bottom: 8px;
     text-align: center;
 }
 
 .board-description {
     text-align: center;
     color: #666;
-    margin-bottom: 30px;
-    font-size: 1.1em;
-    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 1em;
+    line-height: 1.5;
 }
 
 /* 投稿フォーム */
 .post-form {
     background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
     overflow: hidden;
 }
 
 .form-header {
     background: linear-gradient(135deg, #005a9c, #0074d9);
     color: white;
-    padding: 15px 20px;
+    padding: 10px 15px;
     margin: 0;
 }
 
 .form-header h4 {
     margin: 0;
-    font-size: 1.2em;
+    font-size: 1em;
     font-weight: bold;
 }
 
 .form-body {
-    padding: 20px;
+    padding: 15px;
 }
 
 .post-form .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .post-form .input-group:last-child {
@@ -1200,19 +1200,19 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: bold;
     color: #2c3e50;
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 .post-form input[type="text"], 
 .post-form textarea {
     width: 100%;
-    padding: 12px 15px;
+    padding: 8px 12px;
     border: 2px solid #e1e8ed;
-    border-radius: 8px;
-    font-size: 1em;
+    border-radius: 6px;
+    font-size: 0.9em;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     font-family: inherit;
     box-sizing: border-box;
@@ -1222,17 +1222,17 @@ footer {
 .post-form textarea:focus {
     outline: none;
     border-color: #005a9c;
-    box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.1);
+    box-shadow: 0 0 0 2px rgba(0, 90, 156, 0.1);
 }
 
 .post-form textarea {
     resize: vertical;
-    min-height: 100px;
-    line-height: 1.5;
+    min-height: 70px;
+    line-height: 1.4;
 }
 
 .form-actions {
-    margin-top: 20px;
+    margin-top: 15px;
     text-align: center;
 }
 
@@ -1240,13 +1240,13 @@ footer {
     background: linear-gradient(135deg, #28a745, #20c997);
     color: white;
     border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-size: 1.1em;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.95em;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .submit-post-btn:hover {
@@ -1264,15 +1264,15 @@ footer {
 /* 投稿一覧 */
 .posts-container {
     background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     overflow: hidden;
 }
 
 .posts-header {
     background: linear-gradient(135deg, #6f42c1, #8e44ad);
     color: white;
-    padding: 15px 20px;
+    padding: 10px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1280,58 +1280,58 @@ footer {
 
 .posts-header h4 {
     margin: 0;
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .posts-count {
-    font-size: 0.9em;
+    font-size: 0.8em;
     background-color: rgba(255,255,255,0.2);
-    padding: 4px 12px;
-    border-radius: 12px;
+    padding: 3px 10px;
+    border-radius: 10px;
     font-weight: bold;
 }
 
 /* ローディング・エラー・空状態 */
 .posts-loading, .posts-error, .posts-empty {
-    padding: 40px 20px;
+    padding: 25px 15px;
     text-align: center;
     color: #666;
 }
 
 .posts-loading .loading-spinner {
-    width: 30px;
-    height: 30px;
-    border: 3px solid #e1e8ed;
-    border-top: 3px solid #005a9c;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e1e8ed;
+    border-top: 2px solid #005a9c;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin: 0 auto 15px;
+    margin: 0 auto 10px;
 }
 
 .error-icon, .empty-icon {
-    font-size: 2.5em;
-    margin-bottom: 15px;
+    font-size: 2em;
+    margin-bottom: 10px;
 }
 
 .posts-error p, .posts-empty p {
-    margin: 5px 0;
-    font-size: 1.1em;
+    margin: 4px 0;
+    font-size: 0.95em;
 }
 
 .empty-subtitle {
     color: #999 !important;
-    font-size: 0.9em !important;
+    font-size: 0.85em !important;
 }
 
 /* 投稿リスト */
 .posts-list {
-    max-height: 600px;
+    max-height: 450px;
     overflow-y: auto;
 }
 
 .post-item {
     border-bottom: 1px solid #e1e8ed;
-    padding: 20px;
+    padding: 12px 15px;
     transition: background-color 0.2s ease;
 }
 
@@ -1347,13 +1347,13 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .post-author {
     font-weight: bold;
     color: #005a9c;
-    font-size: 1.1em;
+    font-size: 0.95em;
 }
 
 .post-author.admin {
@@ -1362,18 +1362,18 @@ footer {
 
 .post-author.admin::after {
     content: " 👑";
-    font-size: 0.8em;
+    font-size: 0.7em;
 }
 
 .post-timestamp {
     color: #999;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 .post-content {
-    line-height: 1.6;
+    line-height: 1.5;
     color: #2c3e50;
-    font-size: 1em;
+    font-size: 0.9em;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
@@ -1381,52 +1381,60 @@ footer {
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     .board-section {
-        margin: 20px auto;
-        padding: 15px;
+        margin: 15px auto;
+        padding: 12px;
     }
     
     .board-section h3 {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
     
     .board-description {
-        font-size: 1em;
+        font-size: 0.9em;
     }
     
     .form-header, .posts-header {
-        padding: 12px 15px;
+        padding: 8px 12px;
     }
     
     .form-body {
-        padding: 15px;
+        padding: 12px;
     }
     
     .posts-header {
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
         text-align: center;
     }
     
     .post-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 5px;
+        gap: 4px;
     }
     
     .submit-post-btn {
-        padding: 10px 25px;
-        font-size: 1em;
+        padding: 7px 18px;
+        font-size: 0.9em;
     }
     
     .posts-list {
-        max-height: 500px;
+        max-height: 350px;
     }
     
     .post-item {
-        padding: 15px;
+        padding: 10px 12px;
     }
     
     .post-author {
-        font-size: 1em;
+        font-size: 0.9em;
+    }
+    
+    .post-form .input-group {
+        margin-bottom: 12px;
+    }
+    
+    .posts-loading, .posts-error, .posts-empty {
+        padding: 20px 12px;
     }
 } 

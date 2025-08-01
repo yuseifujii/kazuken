@@ -1020,7 +1020,7 @@ async function submitPost() {
     }
     
     if (!content || content.length < 1 || content.length > 300) {
-        alert('投稿内容は1-300文字で入力してください');
+        alert('感想・質問は1-300文字で入力してください');
         return;
     }
     
@@ -1032,7 +1032,7 @@ async function submitPost() {
         await boardSystem.submitPost(nickname, content);
         
         // 成功時の処理
-        alert('投稿が送信されました！');
+        alert('投稿が送信されました！ご意見ありがとうございます！');
         postNicknameInput.value = '';
         postContentInput.value = '';
         updateCharCounterForPost(postNicknameInput, postNicknameCounter, 15);

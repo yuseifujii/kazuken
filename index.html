@@ -48,8 +48,8 @@
         
         <!-- 感想・質問掲示板セクション -->
         <section class="board-section">
-            <h3>📝 感想・質問掲示板</h3>
-            <p class="board-description">ゲームの感想や質問を自由に投稿してください！運営からの回答もここに表示されます。</p>
+            <h3>📝 かずけん掲示板</h3>
+            <p class="board-description">部誌やかずけんについての感想・質問をお気軽にどうぞ！運営からの回答もここに表示されます。</p>
             
             <!-- 投稿フォーム -->
             <div class="post-form">
@@ -62,14 +62,14 @@
                             ニックネーム:
                             <span class="char-counter" id="post-nickname-counter">0/15</span>
                         </label>
-                        <input type="text" id="post-nickname" placeholder="例: 数学好き" maxlength="15">
+                        <input type="text" id="post-nickname" placeholder="例: 数学太郎" maxlength="15">
                     </div>
                     <div class="input-group">
                         <label for="post-content">
                             感想・質問:
                             <span class="char-counter" id="post-content-counter">0/300</span>
                         </label>
-                        <textarea id="post-content" placeholder="ゲームの感想や質問をお聞かせください..." maxlength="300" rows="4"></textarea>
+                        <textarea id="post-content" placeholder="例: 部誌の記事が面白かったです！ / 研究会の活動内容を教えてください..." maxlength="300" rows="3"></textarea>
                     </div>
                     <div class="form-actions">
                         <button id="submit-post-btn" class="submit-post-btn">投稿する</button>
@@ -101,7 +101,7 @@
                 <div id="posts-empty" class="posts-empty" style="display: none;">
                     <div class="empty-icon">📝</div>
                     <p>まだ投稿がありません</p>
-                    <p class="empty-subtitle">最初の投稿者になってみませんか？</p>
+                    <p class="empty-subtitle">かずけんへの感想をお聞かせください！</p>
                 </div>
                 
                 <!-- 投稿リスト -->
