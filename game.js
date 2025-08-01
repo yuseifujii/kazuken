@@ -53,6 +53,20 @@ const totalParticipantsElement = document.getElementById('total-participants');
 const affiliationCounter = document.getElementById('affiliation-counter');
 const nicknameCounter = document.getElementById('nickname-counter');
 
+// 掲示板関連の要素
+const postNicknameInput = document.getElementById('post-nickname');
+const postContentInput = document.getElementById('post-content');
+const submitPostBtn = document.getElementById('submit-post-btn');
+const postsLoading = document.getElementById('posts-loading');
+const postsError = document.getElementById('posts-error');
+const postsErrorMessage = document.getElementById('posts-error-message');
+const postsRetryBtn = document.getElementById('posts-retry-btn');
+const postsEmpty = document.getElementById('posts-empty');
+const postsList = document.getElementById('posts-list');
+const totalPostsElement = document.getElementById('total-posts');
+const postNicknameCounter = document.getElementById('post-nickname-counter');
+const postContentCounter = document.getElementById('post-content-counter');
+
 // ユーザー情報
 let userInfo = {
     affiliation: '',
@@ -77,8 +91,6 @@ class RankingSystem {
     // API呼び出し共通メソッド
     async apiCall(endpoint, options = {}) {
         const url = `${API_CONFIG.baseURL}/api${endpoint}`;
-        console.log('🔗 API URL:', url);
-        console.log('⚙️ API設定:', { baseURL: API_CONFIG.baseURL, endpoint });
         
         const defaultOptions = {
             headers: {
@@ -91,7 +103,6 @@ class RankingSystem {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
 
-            console.log('📤 リクエスト送信:', url, options);
             const response = await fetch(url, {
                 ...defaultOptions,
                 ...options,
@@ -99,7 +110,6 @@ class RankingSystem {
             });
 
             clearTimeout(timeoutId);
-            console.log('📥 レスポンス受信:', response.status, response.statusText);
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -108,7 +118,6 @@ class RankingSystem {
             }
 
             const data = await response.json();
-            console.log('✅ JSONパース完了:', data);
             
             if (!data.success) {
                 throw new Error(data.error || 'APIエラーが発生しました');
@@ -134,7 +143,6 @@ class RankingSystem {
             const data = await this.apiCall('/rankings/get', {
                 method: 'GET'
             });
-            console.log('📨 API応答受信:', data);
 
             // API全体のレスポンスを返す（rankings配列 + totalParticipants）
             return data;
@@ -145,7 +153,6 @@ class RankingSystem {
             // エラー時はLocalStorageのバックアップデータを返す
             const backupData = localStorage.getItem('primeGameRanking_backup');
             const backupArray = backupData ? JSON.parse(backupData) : [];
-            console.log('💾 バックアップデータ使用:', backupArray);
             
             // バックアップデータをAPIレスポンス形式で返す
             return {
@@ -210,7 +217,125 @@ class RankingSystem {
     }
 }
 
+// 掲示板システム（API実装）
+class BoardSystem {
+    constructor() {
+        this.isLoading = false;
+        this.lastError = null;
+    }
+
+    // API呼び出し共通メソッド（RankingSystemと同じ構造）
+    async apiCall(endpoint, options = {}) {
+        const url = `${API_CONFIG.baseURL}/api${endpoint}`;
+        
+        const defaultOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            timeout: API_CONFIG.timeout,
+        };
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
+
+            const response = await fetch(url, {
+                ...defaultOptions,
+                ...options,
+                signal: controller.signal,
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ HTTPエラー:', response.status, errorText);
+                throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || 'APIエラーが発生しました');
+            }
+
+            return data;
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                throw new Error('リクエストがタイムアウトしました');
+            }
+            throw error;
+        }
+    }
+
+    // 投稿を送信
+    async submitPost(nickname, content) {
+        if (this.isLoading) {
+            throw new Error('現在処理中です。しばらくお待ちください。');
+        }
+
+        this.isLoading = true;
+
+        try {
+            const data = await this.apiCall('/board/submit', {
+                method: 'POST',
+                body: JSON.stringify({
+                    nickname: nickname,
+                    content: content
+                })
+            });
+
+            return data;
+        } catch (error) {
+            console.error('投稿送信エラー:', error);
+            this.lastError = error.message;
+            throw error;
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    // 投稿一覧を取得
+    async getPosts() {
+        try {
+            const data = await this.apiCall('/board/get', {
+                method: 'GET'
+            });
+
+            // API全体のレスポンスを返す（posts配列 + totalPosts）
+            return data;
+        } catch (error) {
+            console.error('❌ 投稿取得エラー:', error);
+            this.lastError = error.message;
+            
+            // エラー時は空のデータを返す
+            return {
+                posts: [],
+                totalPosts: 0,
+                count: 0,
+                lastUpdated: new Date().toISOString()
+            };
+        }
+    }
+
+    // エラー状態をクリア
+    clearError() {
+        this.lastError = null;
+    }
+
+    // ローディング状態を取得
+    getLoadingState() {
+        return this.isLoading;
+    }
+
+    // 最後のエラーを取得
+    getLastError() {
+        return this.lastError;
+    }
+}
+
 const rankingSystem = new RankingSystem();
+const boardSystem = new BoardSystem();
 
 // ランキングダッシュボードの表示
 async function showRankingDashboard() {
@@ -240,9 +365,7 @@ async function updateRankingDisplay() {
     rankingLoading.style.display = 'block';
     
     try {
-        console.log('🔍 ランキング取得開始...');
         const data = await rankingSystem.getRankings();
-        console.log('✅ ランキング取得完了:', data);
         
         // データ構造を確認（APIレスポンス全体 vs ランキング配列のみ）
         const rankings = Array.isArray(data) ? data : data.rankings || [];
@@ -252,7 +375,6 @@ async function updateRankingDisplay() {
         rankingLoading.style.display = 'none';
         
         if (rankings.length === 0) {
-            console.log('⚠️ ランキングデータが空です');
             rankingEmpty.style.display = 'block';
             rankingUpdateTime.textContent = '--';
             totalParticipantsElement.textContent = totalParticipants || '--';
@@ -792,4 +914,183 @@ if ('ontouchstart' in window) {
             checkAnswer(false);
         }
     });
-} 
+}
+
+/* ========================================
+   掲示板関連の機能
+   ======================================== */
+
+// 投稿表示の状態をリセット
+function resetPostsDisplayState() {
+    postsLoading.style.display = 'none';
+    postsError.style.display = 'none';
+    postsEmpty.style.display = 'none';
+}
+
+// 投稿一覧を更新
+async function updatePostsDisplay() {
+    // 表示状態をリセット
+    resetPostsDisplayState();
+    
+    // ローディング表示
+    postsLoading.style.display = 'block';
+    
+    try {
+        const data = await boardSystem.getPosts();
+        
+        // データ構造を確認
+        const posts = Array.isArray(data) ? data : data.posts || [];
+        const totalPosts = data.totalPosts || 0;
+        
+        // ローディングを非表示
+        postsLoading.style.display = 'none';
+        
+        if (posts.length === 0) {
+            postsEmpty.style.display = 'block';
+            totalPostsElement.textContent = totalPosts || '0';
+            return;
+        }
+
+        // 投稿データを表示
+        postsList.innerHTML = '';
+        
+        posts.forEach((post, index) => {
+            const postElement = createPostElement(post, index + 1);
+            postsList.appendChild(postElement);
+        });
+        
+        // 総投稿数を更新
+        totalPostsElement.textContent = totalPosts;
+        
+    } catch (error) {
+        console.error('投稿取得エラー:', error);
+        postsLoading.style.display = 'none';
+        postsError.style.display = 'block';
+        postsErrorMessage.textContent = error.message || '投稿の取得に失敗しました';
+    }
+}
+
+// 投稿要素を作成
+function createPostElement(post, index) {
+    const postDiv = document.createElement('div');
+    postDiv.className = 'post-item';
+    
+    // 投稿時刻をフォーマット
+    const timestamp = new Date(post.timestamp);
+    const formattedTime = timestamp.toLocaleString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    // 管理者投稿の場合のクラス追加
+    const authorClass = post.isAdmin ? 'post-author admin' : 'post-author';
+    
+    postDiv.innerHTML = `
+        <div class="post-header">
+            <span class="${authorClass}">${escapeHtml(post.nickname)}</span>
+            <span class="post-timestamp">${formattedTime}</span>
+        </div>
+        <div class="post-content">${escapeHtml(post.content)}</div>
+    `;
+    
+    return postDiv;
+}
+
+// HTMLエスケープ関数（フロントエンド用）
+function escapeHtml(text) {
+    if (!text || typeof text !== 'string') return '';
+    
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// 投稿を送信
+async function submitPost() {
+    const nickname = postNicknameInput.value.trim();
+    const content = postContentInput.value.trim();
+    
+    // バリデーション
+    if (!nickname || nickname.length < 1 || nickname.length > 15) {
+        alert('ニックネームは1-15文字で入力してください');
+        return;
+    }
+    
+    if (!content || content.length < 1 || content.length > 300) {
+        alert('投稿内容は1-300文字で入力してください');
+        return;
+    }
+    
+    // ボタンを無効化
+    submitPostBtn.disabled = true;
+    submitPostBtn.textContent = '投稿中...';
+    
+    try {
+        await boardSystem.submitPost(nickname, content);
+        
+        // 成功時の処理
+        alert('投稿が送信されました！');
+        postNicknameInput.value = '';
+        postContentInput.value = '';
+        updateCharCounterForPost(postNicknameInput, postNicknameCounter, 15);
+        updateCharCounterForPost(postContentInput, postContentCounter, 300);
+        
+        // 投稿一覧を更新
+        await updatePostsDisplay();
+        
+    } catch (error) {
+        alert(`投稿に失敗しました: ${error.message}`);
+        console.error('投稿送信エラー:', error);
+    } finally {
+        // ボタンを再有効化
+        submitPostBtn.disabled = false;
+        submitPostBtn.textContent = '投稿する';
+    }
+}
+
+// 文字数カウンター更新関数（拡張版）
+function updateCharCounterForPost(input, counter, maxLength) {
+    const currentLength = input.value.length;
+    counter.textContent = `${currentLength}/${maxLength}`;
+    counter.classList.remove('warning', 'danger');
+    if (currentLength >= maxLength * 0.9) {
+        counter.classList.add('danger');
+    } else if (currentLength >= maxLength * 0.7) {
+        counter.classList.add('warning');
+    }
+}
+
+/* ========================================
+   掲示板イベントリスナー
+   ======================================== */
+
+// 投稿送信ボタン
+submitPostBtn.addEventListener('click', submitPost);
+
+// エンターキーでの投稿送信（Ctrl+Enter）
+postContentInput.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        submitPost();
+    }
+});
+
+// 文字数カウンター
+postNicknameInput.addEventListener('input', () => {
+    updateCharCounterForPost(postNicknameInput, postNicknameCounter, 15);
+});
+
+postContentInput.addEventListener('input', () => {
+    updateCharCounterForPost(postContentInput, postContentCounter, 300);
+});
+
+// 投稿再試行ボタン
+postsRetryBtn.addEventListener('click', updatePostsDisplay);
+
+// ページ読み込み時に投稿一覧を取得
+document.addEventListener('DOMContentLoaded', () => {
+    updatePostsDisplay();
+}); 

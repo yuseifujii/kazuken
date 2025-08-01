@@ -80,9 +80,77 @@ function getRateLimitKey(ip, nickname) {
   return `rate_limit_${ip}_${nickname}`;
 }
 
+/**
+ * 掲示板投稿のニックネームの妥当性をチェック
+ * @param {string} nickname - ニックネーム（最大15文字）
+ * @returns {boolean} - 妥当性
+ */
+function validatePostNickname(nickname) {
+  if (!nickname || typeof nickname !== 'string') {
+    return false;
+  }
+  
+  // 長さチェック
+  if (nickname.length < 1 || nickname.length > 15) {
+    return false;
+  }
+  
+  // 禁止文字チェック（HTML/JS/SQL等の危険文字）
+  const forbiddenChars = /<|>|&|"|'|`|\||;|--|\/\*|\*\/|select|insert|update|delete|drop|script/gi;
+  if (forbiddenChars.test(nickname)) {
+    return false;
+  }
+  
+  return true;
+}
+
+/**
+ * 掲示板投稿内容の妥当性をチェック
+ * @param {string} content - 投稿内容（最大300文字）
+ * @returns {boolean} - 妥当性
+ */
+function validatePostContent(content) {
+  if (!content || typeof content !== 'string') {
+    return false;
+  }
+  
+  // 長さチェック
+  if (content.length < 1 || content.length > 300) {
+    return false;
+  }
+  
+  // 基本的な不適切内容チェック（改良可能）
+  const inappropriateTerms = /spam|広告|宣伝|詐欺|違法|誹謗中傷/gi;
+  if (inappropriateTerms.test(content)) {
+    return false;
+  }
+  
+  return true;
+}
+
+/**
+ * HTMLエスケープ処理
+ * @param {string} text - エスケープする文字列
+ * @returns {string} - エスケープされた文字列
+ */
+function escapeHtml(text) {
+  if (!text || typeof text !== 'string') return '';
+  
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/`/g, '&#x60;');
+}
+
 module.exports = {
   validateScore,
   validateNickname,
   validateAffiliation,
-  getRateLimitKey
+  getRateLimitKey,
+  validatePostNickname,
+  validatePostContent,
+  escapeHtml
 };

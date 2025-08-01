@@ -46,6 +46,71 @@
             </a>
         </div>
         
+        <!-- 感想・質問掲示板セクション -->
+        <section class="board-section">
+            <h3>📝 感想・質問掲示板</h3>
+            <p class="board-description">ゲームの感想や質問を自由に投稿してください！運営からの回答もここに表示されます。</p>
+            
+            <!-- 投稿フォーム -->
+            <div class="post-form">
+                <div class="form-header">
+                    <h4>💬 投稿する</h4>
+                </div>
+                <div class="form-body">
+                    <div class="input-group">
+                        <label for="post-nickname">
+                            ニックネーム:
+                            <span class="char-counter" id="post-nickname-counter">0/15</span>
+                        </label>
+                        <input type="text" id="post-nickname" placeholder="例: 数学好き" maxlength="15">
+                    </div>
+                    <div class="input-group">
+                        <label for="post-content">
+                            感想・質問:
+                            <span class="char-counter" id="post-content-counter">0/300</span>
+                        </label>
+                        <textarea id="post-content" placeholder="ゲームの感想や質問をお聞かせください..." maxlength="300" rows="4"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button id="submit-post-btn" class="submit-post-btn">投稿する</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 投稿一覧 -->
+            <div class="posts-container">
+                <div class="posts-header">
+                    <h4>💭 みんなの投稿</h4>
+                    <span class="posts-count">総投稿数: <span id="total-posts">0</span>件</span>
+                </div>
+                
+                <!-- ローディング表示 -->
+                <div id="posts-loading" class="posts-loading" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>投稿を読み込み中...</p>
+                </div>
+                
+                <!-- エラー表示 -->
+                <div id="posts-error" class="posts-error" style="display: none;">
+                    <div class="error-icon">⚠️</div>
+                    <p id="posts-error-message">投稿の読み込みに失敗しました</p>
+                    <button id="posts-retry-btn" class="retry-btn">再試行</button>
+                </div>
+                
+                <!-- 投稿なしの表示 -->
+                <div id="posts-empty" class="posts-empty" style="display: none;">
+                    <div class="empty-icon">📝</div>
+                    <p>まだ投稿がありません</p>
+                    <p class="empty-subtitle">最初の投稿者になってみませんか？</p>
+                </div>
+                
+                <!-- 投稿リスト -->
+                <div id="posts-list" class="posts-list">
+                    <!-- 投稿がここに動的に追加される -->
+                </div>
+            </div>
+        </section>
+        
         <!-- 数学ゲームセクション -->
         <section class="math-game-section">
             <h3>素数判定ゲーム</h3>
