@@ -1,4 +1,7 @@
 {
+  "buildCommand": "echo 'No build needed for static files'",
+  "outputDirectory": ".",
+  "installCommand": "npm install",
   "headers": [
     {
       "source": "/api/(.*)",
