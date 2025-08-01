@@ -66,12 +66,20 @@ const postsList = document.getElementById('posts-list');
 const totalPostsElement = document.getElementById('total-posts');
 const postNicknameCounter = document.getElementById('post-nickname-counter');
 const postContentCounter = document.getElementById('post-content-counter');
+const loadMoreContainer = document.getElementById('load-more-container');
+const loadMoreBtn = document.getElementById('load-more-btn');
+const loadMoreCount = document.getElementById('load-more-count');
 
 // ユーザー情報
 let userInfo = {
     affiliation: '',
     nickname: ''
 };
+
+// 投稿表示管理
+let allPosts = []; // 全ての投稿データ
+let displayedPostsCount = 0; // 現在表示されている投稿数
+const POSTS_PER_PAGE = 10; // 1回に表示する投稿数
 
 // API設定
 const API_CONFIG = {
@@ -925,6 +933,7 @@ function resetPostsDisplayState() {
     postsLoading.style.display = 'none';
     postsError.style.display = 'none';
     postsEmpty.style.display = 'none';
+    loadMoreContainer.style.display = 'none';
 }
 
 // 投稿一覧を更新
@@ -951,13 +960,15 @@ async function updatePostsDisplay() {
             return;
         }
 
-        // 投稿データを表示
+        // 全投稿データを保存
+        allPosts = posts;
+        displayedPostsCount = 0;
+        
+        // 投稿リストをクリア
         postsList.innerHTML = '';
         
-        posts.forEach((post, index) => {
-            const postElement = createPostElement(post, index + 1);
-            postsList.appendChild(postElement);
-        });
+        // 初期投稿を表示
+        displayMorePosts();
         
         // 総投稿数を更新
         totalPostsElement.textContent = totalPosts;
@@ -967,6 +978,40 @@ async function updatePostsDisplay() {
         postsLoading.style.display = 'none';
         postsError.style.display = 'block';
         postsErrorMessage.textContent = error.message || '投稿の取得に失敗しました';
+    }
+}
+
+// 段階的に投稿を表示
+function displayMorePosts() {
+    const startIndex = displayedPostsCount;
+    const endIndex = Math.min(startIndex + POSTS_PER_PAGE, allPosts.length);
+    
+    // 新しい投稿を追加表示
+    for (let i = startIndex; i < endIndex; i++) {
+        const post = allPosts[i];
+        const postElement = createPostElement(post, i + 1);
+        postsList.appendChild(postElement);
+    }
+    
+    // 表示済み投稿数を更新
+    displayedPostsCount = endIndex;
+    
+    // 「もっと見る」ボタンの表示制御
+    updateLoadMoreButton();
+}
+
+// 「もっと見る」ボタンの表示制御
+function updateLoadMoreButton() {
+    const remainingPosts = allPosts.length - displayedPostsCount;
+    
+    if (remainingPosts > 0) {
+        // まだ表示していない投稿がある場合
+        loadMoreContainer.style.display = 'block';
+        loadMoreCount.textContent = `(残り ${remainingPosts}件)`;
+        loadMoreBtn.disabled = false;
+    } else {
+        // 全て表示済みの場合
+        loadMoreContainer.style.display = 'none';
     }
 }
 
@@ -1089,6 +1134,19 @@ postContentInput.addEventListener('input', () => {
 
 // 投稿再試行ボタン
 postsRetryBtn.addEventListener('click', updatePostsDisplay);
+
+// もっと見るボタン
+loadMoreBtn.addEventListener('click', () => {
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.querySelector('.load-more-text').textContent = '読み込み中...';
+    
+    // 少し遅延を入れてユーザー体験を向上
+    setTimeout(() => {
+        displayMorePosts();
+        loadMoreBtn.querySelector('.load-more-text').textContent = 'もっと見る';
+        loadMoreBtn.disabled = false;
+    }, 300);
+});
 
 // ページ読み込み時に投稿一覧を取得
 document.addEventListener('DOMContentLoaded', () => {

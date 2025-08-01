@@ -1325,8 +1325,7 @@ footer {
 
 /* 投稿リスト */
 .posts-list {
-    max-height: 450px;
-    overflow-y: auto;
+    /* 段階的表示のため、max-heightを削除してoverflowも調整 */
 }
 
 .post-item {
@@ -1376,6 +1375,50 @@ footer {
     font-size: 0.9em;
     white-space: pre-wrap;
     word-wrap: break-word;
+}
+
+/* もっと見るボタン */
+.load-more-container {
+    padding: 15px;
+    text-align: center;
+    border-top: 1px solid #e1e8ed;
+    background-color: #f8f9fa;
+}
+
+.load-more-btn {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto;
+}
+
+.load-more-btn:hover {
+    background: linear-gradient(135deg, #5a6268, #3d4142);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.load-more-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.load-more-count {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.85em;
+    font-weight: normal;
 }
 
 /* レスポンシブ対応 */
@@ -1436,5 +1479,15 @@ footer {
     
     .posts-loading, .posts-error, .posts-empty {
         padding: 20px 12px;
+    }
+    
+    .load-more-container {
+        padding: 12px;
+    }
+    
+    .load-more-btn {
+        padding: 7px 16px;
+        font-size: 0.85em;
+        gap: 6px;
     }
 } 
