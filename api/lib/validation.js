@@ -30,7 +30,7 @@ function validateScore(score, sessionData) {
 
 /**
  * ニックネームの妥当性をチェック
- * @param {string} nickname - ニックネーム
+ * @param {string} nickname - ニックネーム（最大10文字）
  * @returns {boolean} - 妥当性
  */
 function validateNickname(nickname) {
@@ -39,7 +39,7 @@ function validateNickname(nickname) {
   }
 
   // 長さチェック
-  if (nickname.length < 1 || nickname.length > 20) {
+  if (nickname.length < 1 || nickname.length > 10) {
     return false;
   }
 
@@ -54,7 +54,7 @@ function validateNickname(nickname) {
 
 /**
  * 所属の妥当性をチェック
- * @param {string} affiliation - 所属
+ * @param {string} affiliation - 所属（最大10文字）
  * @returns {boolean} - 妥当性
  */
 function validateAffiliation(affiliation) {
@@ -63,7 +63,7 @@ function validateAffiliation(affiliation) {
   }
 
   // 長さチェック
-  if (affiliation.length < 1 || affiliation.length > 30) {
+  if (affiliation.length < 1 || affiliation.length > 10) {
     return false;
   }
 

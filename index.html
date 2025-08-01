@@ -124,12 +124,18 @@
                     <h4>ランキング参加情報</h4>
                     <p class="form-description">上級レベルではランキングに参加できます！</p>
                     <div class="input-group">
-                        <label for="user-affiliation">所属（学校名など）:</label>
-                        <input type="text" id="user-affiliation" placeholder="例: 千葉県立千葉高等学校" maxlength="30">
+                        <label for="user-affiliation">
+                            所属（学校名など）:
+                            <span class="char-counter" id="affiliation-counter">0/10</span>
+                        </label>
+                        <input type="text" id="user-affiliation" placeholder="例: 千葉高校" maxlength="10">
                     </div>
                     <div class="input-group">
-                        <label for="user-nickname">ニックネーム:</label>
-                        <input type="text" id="user-nickname" placeholder="例: 数学太郎" maxlength="20">
+                        <label for="user-nickname">
+                            ニックネーム:
+                            <span class="char-counter" id="nickname-counter">0/10</span>
+                        </label>
+                        <input type="text" id="user-nickname" placeholder="例: 数学太郎" maxlength="10">
                     </div>
                     <p class="privacy-note">※入力いただいた情報はランキングの表示のみに使用されます</p>
                 </div>

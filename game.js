@@ -48,6 +48,10 @@ const rankingError = document.getElementById('ranking-error');
 const rankingErrorMessage = document.getElementById('ranking-error-message');
 const rankingRetryBtn = document.getElementById('ranking-retry-btn');
 
+// 文字数カウンター
+const affiliationCounter = document.getElementById('affiliation-counter');
+const nicknameCounter = document.getElementById('nickname-counter');
+
 // ユーザー情報
 let userInfo = {
     affiliation: '',
@@ -294,6 +298,20 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// 文字数カウンター更新関数
+function updateCharCounter(input, counter, maxLength) {
+    const currentLength = input.value.length;
+    counter.textContent = `${currentLength}/${maxLength}`;
+    
+    // 色の変更
+    counter.classList.remove('warning', 'danger');
+    if (currentLength >= maxLength * 0.9) {
+        counter.classList.add('danger');
+    } else if (currentLength >= maxLength * 0.7) {
+        counter.classList.add('warning');
+    }
 }
 
 // 効果音を作成する関数
@@ -697,6 +715,12 @@ restartBtn.addEventListener('click', () => {
     userInfo.nickname = '';
     userAffiliationInput.value = '';
     userNicknameInput.value = '';
+    
+    // 文字数カウンターをリセット
+    affiliationCounter.textContent = '0/10';
+    nicknameCounter.textContent = '0/10';
+    affiliationCounter.classList.remove('warning', 'danger');
+    nicknameCounter.classList.remove('warning', 'danger');
 });
 
 // ランキングダッシュボードのイベントリスナー
@@ -713,6 +737,15 @@ rankingModal.addEventListener('click', (e) => {
 // ランキング再試行ボタン
 rankingRetryBtn.addEventListener('click', async () => {
     await updateRankingDisplay();
+});
+
+// 文字数カウンターのイベントリスナー
+userAffiliationInput.addEventListener('input', () => {
+    updateCharCounter(userAffiliationInput, affiliationCounter, 10);
+});
+
+userNicknameInput.addEventListener('input', () => {
+    updateCharCounter(userNicknameInput, nicknameCounter, 10);
 });
 
 primeBtn.addEventListener('click', () => {

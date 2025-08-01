@@ -725,10 +725,28 @@ footer {
 }
 
 .input-group label {
-    display: block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 5px;
     font-weight: bold;
     color: #333;
+}
+
+.char-counter {
+    font-size: 0.8em;
+    color: #666;
+    font-weight: normal;
+    transition: color 0.3s ease;
+}
+
+.char-counter.warning {
+    color: #ff9800;
+}
+
+.char-counter.danger {
+    color: #e74c3c;
+    font-weight: bold;
 }
 
 .input-group input {
@@ -902,11 +920,19 @@ footer {
 
 .nickname-cell {
     font-weight: bold;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .affiliation-cell {
     color: #666;
     font-size: 0.9em;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .time-cell {
@@ -956,6 +982,14 @@ footer {
     .ranking-table td {
         padding: 8px 4px;
         font-size: 0.9em;
+    }
+    
+    .nickname-cell {
+        max-width: 70px;
+    }
+    
+    .affiliation-cell {
+        max-width: 85px;
     }
     
     .user-info-form {
