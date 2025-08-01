@@ -21,26 +21,46 @@ module.exports = async (req, res) => {
   }
 
   try {
+    console.log('🔥 Firestore接続開始...');
     const db = getFirestore();
+    console.log('✅ Firestore接続完了');
     
     // ランキングコレクションから上位50件を取得
+    console.log('📊 ランキングクエリ実行中...');
     const snapshot = await db.collection('rankings')
       .orderBy('score', 'desc')
       .orderBy('timestamp', 'asc') // 同スコアの場合は早い者勝ち
       .limit(50)
       .get();
 
+    console.log('📋 クエリ結果:', snapshot.size, '件のドキュメント');
+
     const rankings = [];
     snapshot.forEach((doc) => {
       const data = doc.data();
+      console.log('📄 ドキュメント:', doc.id, data);
+      
+      // タイムスタンプがnullの場合のハンドリング
+      let timestamp;
+      try {
+        timestamp = data.timestamp && data.timestamp.toDate ? 
+          data.timestamp.toDate().toISOString() : 
+          new Date().toISOString();
+      } catch (timestampError) {
+        console.warn('⚠️ タイムスタンプエラー:', timestampError);
+        timestamp = new Date().toISOString();
+      }
+      
       rankings.push({
         id: doc.id,
         score: data.score,
         nickname: data.nickname,
         affiliation: data.affiliation,
-        timestamp: data.timestamp.toDate().toISOString()
+        timestamp: timestamp
       });
     });
+
+    console.log('✨ 返却データ:', rankings.length, '件');
 
     res.status(200).json({
       success: true,
@@ -50,11 +70,13 @@ module.exports = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('ランキング取得エラー:', error);
+    console.error('❌ ランキング取得エラー:', error);
+    console.error('エラー詳細:', error.stack);
     res.status(500).json({ 
       success: false, 
       error: 'ランキングの取得に失敗しました',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 };

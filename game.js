@@ -72,6 +72,9 @@ class RankingSystem {
     // API呼び出し共通メソッド
     async apiCall(endpoint, options = {}) {
         const url = `${API_CONFIG.baseURL}/api${endpoint}`;
+        console.log('🔗 API URL:', url);
+        console.log('⚙️ API設定:', { baseURL: API_CONFIG.baseURL, endpoint });
+        
         const defaultOptions = {
             headers: {
                 'Content-Type': 'application/json',
@@ -83,6 +86,7 @@ class RankingSystem {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
 
+            console.log('📤 リクエスト送信:', url, options);
             const response = await fetch(url, {
                 ...defaultOptions,
                 ...options,
@@ -90,12 +94,16 @@ class RankingSystem {
             });
 
             clearTimeout(timeoutId);
+            console.log('📥 レスポンス受信:', response.status, response.statusText);
 
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                const errorText = await response.text();
+                console.error('❌ HTTPエラー:', response.status, errorText);
+                throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
             }
 
             const data = await response.json();
+            console.log('✅ JSONパース完了:', data);
             
             if (!data.success) {
                 throw new Error(data.error || 'APIエラーが発生しました');
@@ -103,6 +111,7 @@ class RankingSystem {
 
             return data;
         } catch (error) {
+            console.error('💥 API呼び出しエラー:', error);
             if (error.name === 'AbortError') {
                 throw new Error('リクエストがタイムアウトしました');
             }
@@ -116,17 +125,20 @@ class RankingSystem {
         this.lastError = null;
 
         try {
+            console.log('🌐 API呼び出し開始: /rankings/get');
             const data = await this.apiCall('/rankings/get', {
                 method: 'GET'
             });
+            console.log('📨 API応答受信:', data);
 
             return data.rankings || [];
         } catch (error) {
-            console.error('ランキング取得エラー:', error);
+            console.error('❌ ランキング取得エラー:', error);
             this.lastError = error.message;
             
             // エラー時はLocalStorageのバックアップデータを返す
             const backupData = localStorage.getItem('primeGameRanking_backup');
+            console.log('💾 バックアップデータ使用:', backupData ? JSON.parse(backupData) : []);
             return backupData ? JSON.parse(backupData) : [];
         } finally {
             this.isLoading = false;
@@ -213,12 +225,15 @@ async function updateRankingDisplay() {
     rankingLoading.style.display = 'block';
     
     try {
+        console.log('🔍 ランキング取得開始...');
         const rankings = await rankingSystem.getRankings();
+        console.log('✅ ランキング取得完了:', rankings);
         
         // ローディングを非表示
         rankingLoading.style.display = 'none';
         
         if (rankings.length === 0) {
+            console.log('⚠️ ランキングデータが空です');
             rankingEmpty.style.display = 'block';
             rankingUpdateTime.textContent = '--';
             return;
