@@ -7,7 +7,7 @@ let isGameActive = false;
 let selectedLevel = null;
 let maxNumber = 299; // デフォルトは中級
 let questionsAnswered = 0;
-let highScore = localStorage.getItem('primeGameHighScore') || 0;
+let highScore = 0;
 let lives = 3;
 const MAX_LIVES = 3;
 
@@ -31,6 +31,135 @@ const gameOverScreen = document.getElementById('game-over');
 const finalScoreElement = document.getElementById('final-score');
 const gameOverMessage = document.getElementById('game-over-message');
 const restartBtn = document.getElementById('restart-btn');
+
+// 新しく追加するDOM要素
+const userInfoForm = document.getElementById('user-info-form');
+const userAffiliationInput = document.getElementById('user-affiliation');
+const userNicknameInput = document.getElementById('user-nickname');
+const rankingDashboardBtn = document.getElementById('ranking-dashboard-btn');
+const rankingModal = document.getElementById('ranking-modal');
+const closeRankingBtn = document.getElementById('close-ranking-btn');
+const rankingTableBody = document.getElementById('ranking-table-body');
+const rankingUpdateTime = document.getElementById('ranking-update-time');
+const rankingEmpty = document.getElementById('ranking-empty');
+
+// ユーザー情報
+let userInfo = {
+    affiliation: '',
+    nickname: ''
+};
+
+// ランキングシステム（モック実装）
+class RankingSystem {
+    constructor() {
+        this.rankingKey = 'primeGameRanking_hard';
+    }
+
+    // ランキングデータを取得
+    getRankings() {
+        const data = localStorage.getItem(this.rankingKey);
+        return data ? JSON.parse(data) : [];
+    }
+
+    // 新しいスコアを追加
+    addScore(score, nickname, affiliation) {
+        const rankings = this.getRankings();
+        const newEntry = {
+            score: score,
+            nickname: nickname,
+            affiliation: affiliation,
+            timestamp: new Date().toISOString(),
+            id: Date.now() + Math.random() // 簡易的なID生成
+        };
+
+        rankings.push(newEntry);
+        
+        // スコア順にソート（降順）
+        rankings.sort((a, b) => b.score - a.score);
+        
+        // 上位50位まで保持
+        const topRankings = rankings.slice(0, 50);
+        
+        localStorage.setItem(this.rankingKey, JSON.stringify(topRankings));
+        return topRankings;
+    }
+
+    // ランキングをクリア（デバッグ用）
+    clearRankings() {
+        localStorage.removeItem(this.rankingKey);
+    }
+}
+
+const rankingSystem = new RankingSystem();
+
+// ランキングダッシュボードの表示
+function showRankingDashboard() {
+    updateRankingDisplay();
+    rankingModal.style.display = 'block';
+}
+
+// ランキングダッシュボードを閉じる
+function closeRankingDashboard() {
+    rankingModal.style.display = 'none';
+}
+
+// ランキング表示を更新
+function updateRankingDisplay() {
+    const rankings = rankingSystem.getRankings();
+    
+    if (rankings.length === 0) {
+        rankingTableBody.style.display = 'none';
+        rankingEmpty.style.display = 'block';
+        rankingUpdateTime.textContent = '--';
+        return;
+    }
+
+    rankingTableBody.style.display = 'table-row-group';
+    rankingEmpty.style.display = 'none';
+    
+    // テーブルの内容をクリア
+    rankingTableBody.innerHTML = '';
+    
+    // ランキングデータを表示
+    rankings.forEach((entry, index) => {
+        const row = document.createElement('tr');
+        if (index < 3) {
+            row.classList.add(`rank-${index + 1}`);
+        }
+        
+        const rank = index + 1;
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+        
+        const date = new Date(entry.timestamp);
+        const timeString = date.toLocaleString('ja-JP', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        row.innerHTML = `
+            <td>${medal} ${rank}</td>
+            <td class="score-cell">${entry.score}</td>
+            <td class="nickname-cell">${escapeHtml(entry.nickname)}</td>
+            <td class="affiliation-cell">${escapeHtml(entry.affiliation)}</td>
+            <td class="time-cell">${timeString}</td>
+        `;
+        
+        rankingTableBody.appendChild(row);
+    });
+    
+    // 最終更新時刻を設定
+    const now = new Date();
+    rankingUpdateTime.textContent = now.toLocaleString('ja-JP');
+}
+
+// HTMLエスケープ関数
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 
 // 効果音を作成する関数
 function playSound(frequency, duration, type = 'sine') {
@@ -91,10 +220,27 @@ function createConfetti() {
     setTimeout(() => container.remove(), 3000);
 }
 
+// レベルごとのハイスコアを取得
+function getHighScoreForLevel(level) {
+    const key = `primeGameHighScore_${level}`;
+    return parseInt(localStorage.getItem(key)) || 0;
+}
+
+// レベルごとのハイスコアを保存
+function saveHighScoreForLevel(level, score) {
+    const key = `primeGameHighScore_${level}`;
+    localStorage.setItem(key, score);
+}
+
 // ハイスコア表示を更新
 function updateHighScoreDisplay() {
-    if (highScore > 0) {
-        highScoreDisplay.textContent = `ハイスコア: ${highScore}`;
+    if (selectedLevel) {
+        highScore = getHighScoreForLevel(selectedLevel);
+        if (highScore > 0) {
+            highScoreDisplay.textContent = `ハイスコア (${selectedLevel}): ${highScore}`;
+        } else {
+            highScoreDisplay.textContent = `ハイスコア (${selectedLevel}): --`;
+        }
     }
 }
 
@@ -117,6 +263,11 @@ function gameOver() {
     gameOverScreen.style.display = 'block';
     finalScoreElement.textContent = score;
     
+    // 上級レベルでスコアが記録できる場合、ランキングに追加
+    if (selectedLevel === 'hard' && userInfo.nickname && userInfo.affiliation && score > 0) {
+        rankingSystem.addScore(score, userInfo.nickname, userInfo.affiliation);
+    }
+    
     // ゲームオーバーメッセージ
     if (score >= 100) {
         gameOverMessage.textContent = 'すばらしい成績です！素数マスターですね！';
@@ -124,6 +275,11 @@ function gameOver() {
         gameOverMessage.textContent = 'よく頑張りました！もう一度挑戦してみましょう！';
     } else {
         gameOverMessage.textContent = '練習あるのみ！次はもっと高得点を目指しましょう！';
+    }
+    
+    // 上級レベルの場合、ランキング追加のメッセージを表示
+    if (selectedLevel === 'hard' && userInfo.nickname && userInfo.affiliation && score > 0) {
+        gameOverMessage.textContent += ' ランキングに記録されました！';
     }
     
     // ゲームオーバー音
@@ -237,7 +393,7 @@ function checkAnswer(userSaysPrime) {
         // ハイスコア更新
         if (score > highScore) {
             highScore = score;
-            localStorage.setItem('primeGameHighScore', highScore);
+            saveHighScoreForLevel(selectedLevel, highScore);
             updateHighScoreDisplay();
         }
     } else {
@@ -295,6 +451,20 @@ function checkAnswer(userSaysPrime) {
 
 // ゲーム開始
 function startGame() {
+    // 上級レベルの場合、ユーザー情報をバリデーション
+    if (selectedLevel === 'hard') {
+        const affiliation = userAffiliationInput.value.trim();
+        const nickname = userNicknameInput.value.trim();
+        
+        if (!affiliation || !nickname) {
+            alert('ランキングに参加するには、所属とニックネームの入力が必要です。');
+            return;
+        }
+        
+        userInfo.affiliation = affiliation;
+        userInfo.nickname = nickname;
+    }
+    
     isGameActive = true;
     score = 0;
     streak = 0;
@@ -305,6 +475,7 @@ function startGame() {
     
     startBtn.style.display = 'none';
     levelSelection.style.display = 'none';
+    userInfoForm.style.display = 'none';
     gameOverScreen.style.display = 'none';
     gameContent.classList.add('active');
     progressContainer.style.display = 'block';
@@ -333,10 +504,25 @@ levelButtons.forEach(button => {
                 break;
         }
         
-        // レベル選択を非表示にしてスタートボタンを表示
+        // レベル選択を非表示
         levelSelection.style.display = 'none';
+        
+        // 上級レベルの場合、ユーザー情報入力フォームを表示
+        if (selectedLevel === 'hard') {
+            userInfoForm.style.display = 'block';
+            startBtn.textContent = '上級でスタート！';
+            
+            // ランキングボタンを表示
+            rankingDashboardBtn.style.display = 'block';
+        } else {
+            userInfoForm.style.display = 'none';
+            startBtn.textContent = `${button.querySelector('.level-name').textContent}でスタート！`;
+            
+            // ランキングボタンを非表示
+            rankingDashboardBtn.style.display = 'none';
+        }
+        
         startBtn.style.display = 'block';
-        startBtn.textContent = `${button.querySelector('.level-name').textContent}でスタート！`;
     });
 });
 
@@ -345,6 +531,26 @@ startBtn.addEventListener('click', startGame);
 restartBtn.addEventListener('click', () => {
     gameOverScreen.style.display = 'none';
     levelSelection.style.display = 'block';
+    userInfoForm.style.display = 'none';
+    rankingDashboardBtn.style.display = 'none';
+    selectedLevel = null;
+    
+    // ユーザー情報をリセット
+    userInfo.affiliation = '';
+    userInfo.nickname = '';
+    userAffiliationInput.value = '';
+    userNicknameInput.value = '';
+});
+
+// ランキングダッシュボードのイベントリスナー
+rankingDashboardBtn.addEventListener('click', showRankingDashboard);
+closeRankingBtn.addEventListener('click', closeRankingDashboard);
+
+// モーダルの外側をクリックしたときに閉じる
+rankingModal.addEventListener('click', (e) => {
+    if (e.target === rankingModal) {
+        closeRankingDashboard();
+    }
 });
 
 primeBtn.addEventListener('click', () => {

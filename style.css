@@ -666,4 +666,276 @@ footer {
     .game-credit small {
         font-size: 0.7em;
     }
+}
+
+/* ランキングダッシュボードボタン */
+.ranking-dashboard-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(45deg, #ffd700, #ffb347);
+    color: #333;
+    border: none;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.ranking-dashboard-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+/* ユーザー情報入力フォーム */
+.user-info-form {
+    background: #f8f9fa;
+    border: 2px solid #e74c3c;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.user-info-form h4 {
+    color: #e74c3c;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.form-description {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #e74c3c;
+}
+
+.privacy-note {
+    color: #666;
+    font-size: 0.8em;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.ranking-note {
+    display: block;
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 0.7em;
+    margin-top: 5px;
+}
+
+/* ランキングモーダル */
+.ranking-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.ranking-modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.ranking-header {
+    background: linear-gradient(135deg, #ffd700, #ffb347);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 15px 15px 0 0;
+}
+
+.ranking-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5em;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2em;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.ranking-content {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.ranking-update-time {
+    text-align: center;
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+}
+
+.ranking-table-container {
+    overflow-x: auto;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.ranking-table th,
+.ranking-table td {
+    padding: 12px 8px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.ranking-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: #333;
+    position: sticky;
+    top: 0;
+}
+
+.ranking-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.ranking-table .rank-1 {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    font-weight: bold;
+}
+
+.ranking-table .rank-2 {
+    background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+    font-weight: bold;
+}
+
+.ranking-table .rank-3 {
+    background: linear-gradient(135deg, #cd7f32, #deb887);
+    font-weight: bold;
+}
+
+.score-cell {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.nickname-cell {
+    font-weight: bold;
+}
+
+.affiliation-cell {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.time-cell {
+    color: #999;
+    font-size: 0.8em;
+}
+
+.ranking-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.ranking-empty p {
+    margin: 0;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .ranking-dashboard-btn {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+    
+    .ranking-modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    .ranking-header {
+        padding: 15px;
+    }
+    
+    .ranking-header h3 {
+        font-size: 1.2em;
+    }
+    
+    .ranking-table th,
+    .ranking-table td {
+        padding: 8px 4px;
+        font-size: 0.9em;
+    }
+    
+    .user-info-form {
+        padding: 15px;
+    }
+    
+    .input-group input {
+        padding: 8px;
+    }
 } 

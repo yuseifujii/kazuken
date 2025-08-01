@@ -52,6 +52,11 @@
             <p class="game-description">表示される数字が素数かどうかを当てよう！</p>
             
             <div id="prime-game" class="game-container">
+                <!-- ランキングダッシュボードボタン -->
+                <button id="ranking-dashboard-btn" class="ranking-dashboard-btn" style="display: none;">
+                    📊 ランキング
+                </button>
+
                 <div class="score-board">
                     <span>スコア: <span id="score">0</span></span>
                     <span>連続正解: <span id="streak">0</span></span>
@@ -106,14 +111,64 @@
                         <button class="level-btn" data-level="hard">
                             <span class="level-name">上級</span>
                             <span class="level-range">3 ~ 999</span>
+                            <small class="ranking-note">※ランキング対象</small>
                         </button>
                     </div>
+                </div>
+
+                <!-- 上級レベル用の追加情報入力フォーム -->
+                <div id="user-info-form" class="user-info-form" style="display: none;">
+                    <h4>ランキング参加情報</h4>
+                    <p class="form-description">上級レベルではランキングに参加できます！</p>
+                    <div class="input-group">
+                        <label for="user-affiliation">所属（学校名など）:</label>
+                        <input type="text" id="user-affiliation" placeholder="例: 千葉県立千葉高等学校" maxlength="30">
+                    </div>
+                    <div class="input-group">
+                        <label for="user-nickname">ニックネーム:</label>
+                        <input type="text" id="user-nickname" placeholder="例: 数学太郎" maxlength="20">
+                    </div>
+                    <p class="privacy-note">※入力いただいた情報はランキングの表示のみに使用されます</p>
                 </div>
                 
                 <button id="start-btn" class="start-btn" style="display: none;">ゲームスタート</button>
                 
                 <div class="game-credit">
                     <small>Game by Yusei Fujii</small>
+                </div>
+            </div>
+
+            <!-- ランキングダッシュボード（モーダル） -->
+            <div id="ranking-modal" class="ranking-modal" style="display: none;">
+                <div class="ranking-modal-content">
+                    <div class="ranking-header">
+                        <h3>🏆 上級レベル ランキング</h3>
+                        <button id="close-ranking-btn" class="close-btn">&times;</button>
+                    </div>
+                    <div class="ranking-content">
+                        <div class="ranking-update-time">
+                            最終更新: <span id="ranking-update-time">--</span>
+                        </div>
+                        <div class="ranking-table-container">
+                            <table class="ranking-table">
+                                <thead>
+                                    <tr>
+                                        <th>順位</th>
+                                        <th>得点</th>
+                                        <th>名前</th>
+                                        <th>所属</th>
+                                        <th>記録時刻</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ranking-table-body">
+                                    <!-- ランキングデータがここに表示される -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="ranking-empty" id="ranking-empty" style="display: none;">
+                            <p>まだランキングデータがありません。<br>最初のランキング参加者になりましょう！</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
