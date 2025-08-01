@@ -1480,7 +1480,8 @@ footer {
     .post-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 4px;
+        gap: 1px !important; /* さらにコンパクト化 */
+        margin-bottom: 2px !important; /* ニックネームの下の隙間を縮小 */
     }
     
     .submit-post-btn {
@@ -1501,7 +1502,7 @@ footer {
     }
     
     .post-item {
-        padding: 6px 10px; /* コンパクト化 */
+        padding: 4px 8px; /* さらにコンパクト化 */
         display: block !important;
         position: relative !important;
         width: 100% !important;
@@ -1509,18 +1510,18 @@ footer {
     
     .post-author {
         font-size: 0.8em; /* コンパクト化 */
-        margin-bottom: 2px; /* コンパクト化 */
+        margin-bottom: 0px !important; /* さらにコンパクト化 */
     }
     
     .post-content {
         font-size: 0.8em !important; /* コンパクト化 */
         line-height: 1.3 !important; /* コンパクト化 */
-        margin: 3px 0 !important; /* コンパクト化 */
+        margin: 0px 0 !important; /* さらにコンパクト化 */
     }
     
     .post-timestamp {
         font-size: 0.7em !important; /* コンパクト化 */
-        margin-top: 2px !important; /* コンパクト化 */
+        margin: 0px !important; /* さらにコンパクト化 */
     }
     
     .post-form .input-group {
