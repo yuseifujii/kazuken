@@ -81,6 +81,7 @@ main p {
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
+    margin-bottom: 50px; /* 掲示板との間隔を拡大 */
 }
 
 .pdf-link {
@@ -88,18 +89,20 @@ main p {
     width: 280px;
     padding: 20px;
     background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 3px solid #005a9c;
+    border-radius: 10px;
     text-decoration: none;
     color: #333;
     text-align: center;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 90, 156, 0.15);
 }
 
 .pdf-link:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 20px rgba(0, 90, 156, 0.25);
+    border-color: #003d6b;
+    background-color: #f8fbff;
 }
 
 .pdf-link .year {
