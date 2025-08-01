@@ -1266,7 +1266,7 @@ footer {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    overflow: hidden;
+    overflow: visible; /* モバイルでの表示問題を解決するため変更 */
 }
 
 .posts-header {
@@ -1325,13 +1325,22 @@ footer {
 
 /* 投稿リスト */
 .posts-list {
-    /* 段階的表示のため、max-heightを削除してoverflowも調整 */
+    /* 段階的表示機能により、全ての投稿を順次表示 */
+    width: 100%;
+    display: block;
+    overflow: visible;
+    position: relative;
+    min-height: auto;
 }
 
 .post-item {
     border-bottom: 1px solid #e1e8ed;
     padding: 12px 15px;
     transition: background-color 0.2s ease;
+    display: block;
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
 }
 
 .post-item:last-child {
@@ -1462,11 +1471,17 @@ footer {
     }
     
     .posts-list {
-        max-height: 350px;
+        /* モバイルでも段階的表示機能を使用するため、max-heightを削除 */
+        overflow: visible !important;
+        position: relative !important;
+        display: block !important;
     }
     
     .post-item {
         padding: 10px 12px;
+        display: block !important;
+        position: relative !important;
+        width: 100% !important;
     }
     
     .post-author {

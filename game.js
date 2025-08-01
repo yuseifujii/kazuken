@@ -990,6 +990,12 @@ function displayMorePosts() {
     for (let i = startIndex; i < endIndex; i++) {
         const post = allPosts[i];
         const postElement = createPostElement(post, i + 1);
+        
+        // モバイル対応: 確実に表示されるよう明示的にスタイル設定
+        postElement.style.display = 'block';
+        postElement.style.visibility = 'visible';
+        postElement.style.position = 'relative';
+        
         postsList.appendChild(postElement);
     }
     
@@ -998,6 +1004,11 @@ function displayMorePosts() {
     
     // 「もっと見る」ボタンの表示制御
     updateLoadMoreButton();
+    
+    // モバイルデバッグ: 投稿リストの高さを確認
+    if (window.innerWidth <= 768) {
+        console.log(`モバイル表示: ${displayedPostsCount}/${allPosts.length}件表示済み`);
+    }
 }
 
 // 「もっと見る」ボタンの表示制御
@@ -1019,6 +1030,16 @@ function updateLoadMoreButton() {
 function createPostElement(post, index) {
     const postDiv = document.createElement('div');
     postDiv.className = 'post-item';
+    
+    // モバイル対応: 確実な表示のための明示的スタイル設定
+    postDiv.style.cssText = `
+        display: block !important;
+        visibility: visible !important;
+        position: relative !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        opacity: 1 !important;
+    `;
     
     // 投稿時刻をフォーマット
     const timestamp = new Date(post.timestamp);
