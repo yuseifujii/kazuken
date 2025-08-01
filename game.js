@@ -37,6 +37,7 @@ const restartBtn = document.getElementById('restart-btn');
 const userInfoForm = document.getElementById('user-info-form');
 const userAffiliationInput = document.getElementById('user-affiliation');
 const userNicknameInput = document.getElementById('user-nickname');
+const backToLevelBtn = document.getElementById('back-to-level-btn');
 const rankingDashboardBtn = document.getElementById('ranking-dashboard-btn');
 const rankingModal = document.getElementById('ranking-modal');
 const closeRankingBtn = document.getElementById('close-ranking-btn');
@@ -800,6 +801,7 @@ function startGame() {
     streakElement.textContent = streak;
     
     startBtn.style.display = 'none';
+    backToLevelBtn.style.display = 'none'; // レベル選択に戻るボタンも非表示
     levelSelection.style.display = 'none';
     userInfoForm.style.display = 'none';
     gameOverScreen.style.display = 'none';
@@ -845,6 +847,7 @@ levelButtons.forEach(button => {
         // ランキングボタンは常に表示（位置が固定なので表示制御不要）
         
         startBtn.style.display = 'block';
+        backToLevelBtn.style.display = 'block'; // レベル選択に戻るボタンも表示
     });
 });
 
@@ -854,7 +857,31 @@ restartBtn.addEventListener('click', () => {
     gameOverScreen.style.display = 'none';
     levelSelection.style.display = 'block';
     userInfoForm.style.display = 'none';
+    startBtn.style.display = 'none'; // スタートボタンを非表示
+    backToLevelBtn.style.display = 'none'; // レベル選択に戻るボタンも非表示
     // ランキングボタンは常に表示のため、非表示にしない
+    selectedLevel = null;
+    
+    // ユーザー情報をリセット
+    userInfo.affiliation = '';
+    userInfo.nickname = '';
+    userAffiliationInput.value = '';
+    userNicknameInput.value = '';
+    
+    // 文字数カウンターをリセット
+    affiliationCounter.textContent = '0/10';
+    nicknameCounter.textContent = '0/10';
+    affiliationCounter.classList.remove('warning', 'danger');
+    nicknameCounter.classList.remove('warning', 'danger');
+});
+
+// レベル選択に戻るボタンのイベントリスナー
+backToLevelBtn.addEventListener('click', () => {
+    // レベル選択画面に戻る
+    levelSelection.style.display = 'block';
+    startBtn.style.display = 'none';
+    backToLevelBtn.style.display = 'none';
+    userInfoForm.style.display = 'none';
     selectedLevel = null;
     
     // ユーザー情報をリセット

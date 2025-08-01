@@ -364,6 +364,24 @@ footer {
     transform: translateY(-2px);
 }
 
+.back-to-level-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.back-to-level-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
 .result-message {
     text-align: center;
     font-size: 1.2em;
@@ -1470,6 +1488,11 @@ footer {
         font-size: 0.9em;
     }
     
+    .back-to-level-btn {
+        padding: 10px !important;
+        font-size: 0.9em !important;
+    }
+    
     .posts-list {
         /* モバイルでも段階的表示機能を使用するため、max-heightを削除 */
         overflow: visible !important;
@@ -1478,14 +1501,26 @@ footer {
     }
     
     .post-item {
-        padding: 10px 12px;
+        padding: 6px 10px; /* コンパクト化 */
         display: block !important;
         position: relative !important;
         width: 100% !important;
     }
     
     .post-author {
-        font-size: 0.9em;
+        font-size: 0.8em; /* コンパクト化 */
+        margin-bottom: 2px; /* コンパクト化 */
+    }
+    
+    .post-content {
+        font-size: 0.8em !important; /* コンパクト化 */
+        line-height: 1.3 !important; /* コンパクト化 */
+        margin: 3px 0 !important; /* コンパクト化 */
+    }
+    
+    .post-timestamp {
+        font-size: 0.7em !important; /* コンパクト化 */
+        margin-top: 2px !important; /* コンパクト化 */
     }
     
     .post-form .input-group {
